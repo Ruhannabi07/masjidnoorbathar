@@ -1,0 +1,544 @@
+:root {
+    --primary-green: #006847;
+    /* Adjust based on image */
+    --hover-green: #005238;
+    --text-dark: #1f2937;
+    --text-light: #6b7280;
+    --bg-light: #f9fafb;
+    --white: #ffffff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    /* Prevent scrolling on desktop if verified fit */
+    color: var(--text-dark);
+}
+
+.container {
+    display: flex;
+    height: 100%;
+}
+
+/* Left Image Section */
+.image-section {
+    flex: 1;
+    background-image: url('assets/background.jpg');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    /* In case image is missing, a fallback color */
+    background-color: var(--primary-green);
+}
+
+/* Right Content Section */
+.content-section {
+    flex: 1;
+    /* Or use a fixed width or percentage like 40% if the image should be larger */
+    background-color: var(--white);
+    display: flex;
+    flex-direction: column;
+    padding: 40px 60px;
+    position: relative;
+    max-width: 600px;
+    /* Optional constraint */
+    min-width: 400px;
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: auto;
+    /* Pushes content down */
+}
+
+.admin-login {
+    text-decoration: none;
+    color: #9ca3af;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+}
+
+.admin-login:hover {
+    color: var(--primary-green);
+}
+
+/* Main Content */
+main {
+    margin-bottom: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* Ensure content takes available space but allows scrolling if needed */
+    flex-shrink: 0;
+}
+
+/* Ensure content section handles scrolling */
+.content-section {
+    flex: 1;
+    background-color: var(--white);
+    display: flex;
+    flex-direction: column;
+    padding: 40px 60px;
+    position: relative;
+    max-width: 600px;
+    min-width: 400px;
+    overflow-y: auto;
+    /* Enable scrolling */
+    height: 100vh;
+    /* Full height to trigger overflow */
+}
+
+/* Scrollbar styling for a cleaner look (optional but good) */
+.content-section::-webkit-scrollbar {
+    width: 6px;
+}
+
+.content-section::-webkit-scrollbar-thumb {
+    background-color: #e5e7eb;
+    border-radius: 3px;
+}
+
+.logo-box {
+    width: 48px;
+    height: 48px;
+    background-color: #e6f4ea;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.logo-box svg {
+    width: 28px;
+    height: 28px;
+    stroke: var(--primary-green);
+    fill: none;
+}
+
+.logo-box svg path {
+    stroke: var(--primary-green);
+}
+
+.logo-box svg circle {
+    fill: var(--primary-green);
+}
+
+.main-title {
+    font-family: 'Merriweather', 'Inter', serif;
+    font-size: 3rem;
+    line-height: 1.1;
+    color: var(--primary-green);
+    margin-bottom: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    /* ALL CAPS */
+}
+
+.subtitle {
+    font-size: 1.125rem;
+    color: var(--text-light);
+    line-height: 1.5;
+    margin-bottom: 48px;
+    max-width: 80%;
+}
+
+.download-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    /* Center items */
+    text-align: center;
+    align-self: flex-start;
+    /* Default alignment */
+    width: 100%;
+    /* Ensure centering works in container */
+}
+
+/* Override self alignment to fully center in the block if desired, 
+   or just the contents. The user said "center the download our and icon below it".
+   Assuming they mean centered relative to each other, or centered on the page? 
+   "center the download our and and icon below it" likely means center-aligned text and button.
+   Let's also assume they might want it centered relative to the text block? 
+   Usually "below it" implies standard flow. I'll center the content within the div. */
+
+.download-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #9ca3af;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.download-btn {
+    width: 64px;
+    height: 64px;
+    background-color: var(--primary-green);
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.download-btn:hover {
+    background-color: var(--hover-green);
+}
+
+.download-btn svg {
+    width: 32px;
+    height: 32px;
+    stroke: white;
+}
+
+.download-btn svg path {
+    stroke: white;
+}
+
+/* App Icon Link Container */
+/* App Icon Link Container */
+.app-download-link {
+    display: block;
+    width: 90px;
+    height: 90px;
+    margin: 16px auto;
+    background-color: transparent !important;
+    /* Force transparency */
+    text-decoration: none;
+    transition: transform 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    /* Remove mobile highlight */
+}
+
+.app-download-link:active {
+    transform: scale(0.95);
+}
+
+.app-download-link img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    background-color: transparent;
+    border-radius: 28px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Footer */
+footer {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 24px;
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+footer p {
+    font-size: 0.75rem;
+    color: #9ca3af;
+}
+
+.love-credit {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.heart {
+    color: #ef4444;
+    /* Red heart */
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .container {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .image-section {
+        height: 250px;
+        flex: none;
+        width: 100%;
+    }
+
+    .content-section {
+        flex: 1;
+        max-width: 100%;
+        padding: 32px 24px;
+        height: auto;
+        min-height: calc(100vh - 250px);
+        align-items: center;
+        /* Center content on mobile */
+        text-align: center;
+    }
+
+    header {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 20px;
+    }
+
+    .main-title {
+        font-size: 2rem;
+        margin-top: 10px;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+        margin-bottom: 32px;
+        max-width: 100%;
+    }
+
+    body {
+        overflow: auto;
+        height: auto;
+    }
+}
+
+/* Modal Background */
+.modal {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Backdrop */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Modal Card */
+.modal-content {
+    background-color: #fff;
+    width: 380px;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    position: relative;
+    text-align: center;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Close Button */
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: #000;
+}
+
+/* Header */
+.modal-header {
+    margin-bottom: 32px;
+}
+
+.modal-icon {
+    width: 56px;
+    height: 56px;
+    background-color: #e6f4ea;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 16px;
+}
+
+.modal-header h2 {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 8px;
+}
+
+.modal-header p {
+    color: #6b7280;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    max-width: 80%;
+    margin: 0 auto;
+}
+
+/* Form */
+.login-form {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper svg {
+    position: absolute;
+    left: 14px;
+    z-index: 1;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 10px 14px 10px 40px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: #1f2937;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.input-wrapper input:focus {
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 2px rgba(0, 104, 71, 0.1);
+}
+
+.label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.forgot-pass {
+    font-size: 0.875rem;
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.sign-in-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--primary-green);
+    /* Adjusted to match Household Manager blue approximately */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 8px;
+}
+
+.sign-in-btn:hover {
+    background-color: var(--hover-green);
+}
+
+/* Divider */
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 24px 0;
+    color: #9ca3af;
+    font-size: 0.875rem;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.divider span {
+    padding: 0 10px;
+}
+
+/* Social Buttons */
+.social-login {
+    display: flex;
+    gap: 12px;
+}
+
+.social-btn {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background-color: #fff;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.social-btn:hover {
+    background-color: #f9fafb;
+}
+
+/* Footer Link */
+.signup-footer {
+    margin-top: 32px;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.signup-footer a {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 600;
+}

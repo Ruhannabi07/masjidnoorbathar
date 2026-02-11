@@ -1,0 +1,2305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masjid Noor Bathar Committee</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@700;900&display=swap"
+        rel="stylesheet">
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-green': '#006847',
+                        'hover-green': '#005238',
+                        'text-dark': '#1f2937',
+                        'text-light': '#6b7280',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Local Nastaliq Urdu Font */
+        @font-face {
+            font-family: 'Noto Nastaliq Urdu';
+            src: url('assets/NotoNastaliqUrdu-Regular.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Noto Nastaliq Urdu';
+            src: url('assets/NotoNastaliqUrdu-Bold.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-default::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scrollbar-default::-webkit-scrollbar-thumb {
+            background-color: #e5e7eb;
+            border-radius: 3px;
+        }
+
+        /* Custom select styling */
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        /* Table row hover */
+        .table-row:hover {
+            background-color: #f9fafb;
+        }
+
+        /* Status badges */
+        .status-verified {
+            background-color: #dcfce7;
+            color: #16a34a;
+        }
+
+        .status-pending {
+            background-color: #fef9c3;
+            color: #ca8a04;
+        }
+
+        /* 3D / Neumorphism Utilities */
+        .card-3d {
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow:
+                8px 8px 16px #d1d5db,
+                -8px -8px 16px #ffffff;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .card-3d:hover {
+            transform: translateY(-4px);
+            box-shadow:
+                12px 12px 20px #d1d5db,
+                -12px -12px 20px #ffffff;
+        }
+
+        .btn-3d {
+            transition: all 0.1s ease;
+            box-shadow:
+                0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                0 2px 4px -1px rgba(0, 0, 0, 0.06),
+                0 4px 0px 0px rgba(0, 0, 0, 0.15);
+            /* Bottom 'thickness' border */
+            transform: translateY(0);
+        }
+
+        .btn-3d:active {
+            transform: translateY(3px);
+            box-shadow:
+                0 1px 2px 0 rgba(0, 0, 0, 0.05),
+                0 1px 0px 0px rgba(0, 0, 0, 0.15);
+        }
+
+        .text-shadow {
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Gradient Text */
+        .text-gradient-green {
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            background-image: linear-gradient(135deg, #006847 0%, #059669 100%);
+        }
+
+        /* Glass effect for overlays */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Hadith Transitions */
+        .hadith-container {
+            transition: opacity 1s ease-in-out;
+        }
+
+        .hadith-fade-out {
+            opacity: 0;
+        }
+
+        .hadith-fade-in {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen text-text-dark bg-white font-sans flex flex-col">
+
+    <!-- HERO SECTION (Hadith) -->
+    <div id="hadith-hero-section"
+        class="w-full hero-gradient shrink-0 relative z-20 flex justify-center items-center py-12 px-4 min-h-[180px] shadow-sm">
+        <!-- Admin Login Button (Absolute Top-Right) -->
+        <a href="#"
+            class="admin-login absolute top-4 right-4 flex items-center gap-1.5 text-xs font-bold tracking-wider text-gray-400 hover:text-primary-green transition-colors z-50">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lock-icon">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            ADMIN LOGIN
+        </a>
+        <div class="max-w-4xl w-full flex flex-col items-center text-center">
+
+            <!-- Hadith Content Wrapper -->
+            <div id="hadith-content"
+                class="hadith-container opacity-100 transition-opacity duration-1000 ease-in-out w-full">
+                <p id="hadith-urdu"
+                    class="text-2xl md:text-3xl font-['Noto_Nastaliq_Urdu'] font-bold text-gray-800 leading-[3] md:leading-[5] tracking-wide mb-8 py-4 dir-rtl"
+                    style="direction: rtl;">
+                    <!-- Urdu Text will load here -->
+                    Loading Hadith...
+                </p>
+                <div class="flex flex-col items-center gap-1">
+                    <p id="hadith-english"
+                        class="text-sm md:text-base font-medium text-primary-green font-sans max-w-2xl text-center">
+                        <!-- English Text will load here -->
+                    </p>
+                    <span id="hadith-source" class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">
+                        <!-- Source will load here -->
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <div class="flex-1 flex flex-col md:flex-row relative z-10">
+
+        <!-- Dashboard Section (Replaces Image) -->
+        <div id="dashboard-container"
+            class="hidden md:flex md:w-1/2 lg:w-[45%] bg-slate-50 flex-col scrollbar-default relative shrink-0 border-r border-gray-200">
+            <!-- GLOBAL VIEW -->
+            <div id="dashboard-global-view" class="flex-1 flex flex-col w-full h-full">
+                <!-- Dashboard Header -->
+                <div class="p-6 pb-2">
+                    <h2 class="text-xl font-bold text-primary-green uppercase tracking-wide">Masjid Statistics</h2>
+                    <p id="dashboard-subtitle" class="text-xs text-gray-500 mt-1">Overview for selected month</p>
+                </div>
+
+                <!-- Charts Grid -->
+                <div class="flex-1 p-4 grid grid-cols-1 gap-8">
+
+                    <!-- Household Stats -->
+                    <div class="card-3d p-5 flex flex-col min-h-[320px]">
+                        <h3 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Masjid Statistics</h3>
+                        <div id="chart-household" class="flex-1 w-full h-full"></div>
+                    </div>
+
+                    <!-- Financial Summary -->
+                    <div class="card-3d p-5 flex flex-col min-h-[320px]">
+                        <h3 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Financial Overview
+                        </h3>
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div class="bg-green-50 p-3 rounded-2xl border border-green-100 text-center shadow-inner">
+                                <p class="text-[10px] text-gray-500 uppercase font-bold">Total Salary</p>
+                                <p id="dash-total-salary-display"
+                                    class="text-xl font-black text-primary-green drop-shadow-sm">₹0</p>
+                            </div>
+                            <div class="bg-blue-50 p-3 rounded-2xl border border-blue-100 text-center shadow-inner">
+                                <p class="text-[10px] text-gray-500 uppercase font-bold">Total Collected</p>
+                                <p id="dash-total-collected-display"
+                                    class="text-xl font-black text-blue-700 drop-shadow-sm">₹0</p>
+                            </div>
+                        </div>
+                        <div id="chart-financial" class="flex-1 w-full h-full"></div>
+                    </div>
+
+                    <!-- Payment Modes -->
+                    <div class="card-3d p-5 flex flex-col min-h-[320px]">
+                        <h3 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Payment Modes</h3>
+                        <div id="chart-modes" class="flex-1 w-full h-full"></div>
+                    </div>
+
+                    <!-- Top Contributors -->
+                    <div class="card-3d p-5 flex flex-col min-h-[300px]">
+                        <h3 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Top 5 Punctual
+                            Households
+                            <span class="text-xs font-normal text-gray-400 normal-case">(Ratio &ge; 70%)</span>
+                        </h3>
+                        <div id="chart-top-contributors" class="flex-1 w-full h-[250px]"></div>
+                    </div>
+
+                    <!-- Top Worst Contributors -->
+                    <div class="card-3d p-5 flex flex-col min-h-[300px]">
+                        <h3 class="text-sm font-bold text-red-700 mb-2 uppercase tracking-wider">Needs Improvement <span
+                                class="text-xs font-normal text-red-400 normal-case">(Ratio &le; 30%)</span></h3>
+                        <div id="chart-worst-contributors" class="flex-1 w-full h-[250px]"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INDIVIDUAL VIEW (Initially Hidden) -->
+            <div id="dashboard-individual-view" class="hidden flex-1 flex-col w-full h-full">
+                <!-- Header -->
+                <div class="p-6 pb-4 border-b border-gray-100 bg-white">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h2 id="indiv-name" class="text-3xl font-black text-gray-900 leading-tight drop-shadow-sm">
+                                Household Name</h2>
+                            <span id="indiv-status-badge"
+                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold shadow-sm uppercase tracking-wide bg-green-100 text-green-800 mt-2">
+                                Paid up to date
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-1 p-6 grid grid-cols-1 gap-8 overflow-y-auto">
+                    <!-- Metrics -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+                        <div class="card-3d bg-red-50 border-none p-5 relative overflow-hidden group">
+                            <div
+                                class="absolute right-0 top-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+                                <svg class="w-16 h-16" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider relative z-10">
+                                Pending
+                                Months</p>
+                            <p id="indiv-pending-count"
+                                class="text-4xl font-black text-red-600 mt-2 relative z-10 drop-shadow-sm">0</p>
+                        </div>
+                        <div class="card-3d bg-indigo-50 border-none p-5 relative overflow-hidden group">
+                            <div
+                                class="absolute right-0 top-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+                                <svg class="w-16 h-16" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a1 1 0 100-2 1 1 0 000 2z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider relative z-10">Total
+                                Contributed</p>
+                            <p id="indiv-total-contributed"
+                                class="text-2xl font-black text-indigo-700 mt-2 relative z-10 drop-shadow-sm">₹0</p>
+                            <p class="text-[10px] text-indigo-400 mt-1 font-medium relative z-10">(Selected Period)</p>
+                        </div>
+                        <div
+                            class="card-3d bg-orange-50 border-none p-5 col-span-2 md:col-span-1 relative overflow-hidden group">
+                            <div
+                                class="absolute right-0 top-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+                                <svg class="w-16 h-16" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.45-.02-2.172a1 1 0 10-1.773-.93c-.62 1.186-.543 2.584.053 3.864.53 1.137 1.45 2.072 2.6 2.593.18.082.368.145.56.187.316.07.65.1.983.08.318-.02.635-.094.94-.22 2.015-.83 2.972-2.33 3.32-3.834.426-1.842-.317-4.008-1.822-5.748l-.071-.082z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider relative z-10">
+                                Current
+                                Streak 🔥</p>
+                            <p id="indiv-streak-count"
+                                class="text-3xl font-black text-orange-600 mt-2 relative z-10 drop-shadow-sm">0 Months
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Payment History Chart -->
+                    <div class="card-3d p-6 flex flex-col min-h-[300px]">
+                        <h3 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Payment History</h3>
+                        <div id="chart-indiv-history" class="flex-1 w-full h-[250px]"></div>
+                    </div>
+
+                    <!-- Breakdown Chart -->
+                    <div class="card-3d p-6 flex flex-col min-h-[300px]">
+                        <h3 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Contribution Breakdown
+                        </h3>
+                        <div id="chart-indiv-breakdown" class="flex-1 w-full h-[200px]"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Mobile Dashboard (Collapsible or just stacked?) -->
+        <!-- For mobile, we might want to hide it initially or show simpler stats. 
+         Given the request implies removing the IMAGE (which was hidden on mobile mostly or small header), 
+         we will replace the 'md:hidden h-48 w-full bg-primary-green' header with a smaller stats bar or just remove it to save space, 
+         OR we can put a simplified dashboard. 
+         Let's add a "View Dashboard" toggle or just put it at the top scrollable. 
+         The detailed requirement says "Removal of Static Elements... In its place, we shall implement a dynamic... dashboard".
+         So we'll insert a mobile dashboard section here too.
+    -->
+        <!-- Mobile Dashboard Removed (Now using responsive vertical stacking) -->
+
+        <!-- Content Section -->
+        <div class="flex-1 flex flex-col p-6 md:p-8 lg:p-12 h-full scrollbar-default relative w-full bg-white">
+
+
+
+            <main class="flex flex-col flex-1">
+                <!-- Title Section -->
+                <div class="mb-6">
+                    <!-- Header Title Container with fixed height and overflow hidden for rolling effect -->
+                    <div class="header-title-container min-h-[140px] flex items-center mb-2 overflow-hidden relative">
+                        <h1 id="dynamic-header"
+                            class="w-full font-serif font-black text-primary-green uppercase tracking-widest transition-all duration-700 ease-in-out transform translate-y-0 opacity-100">
+                            Masjid Noor<br>Bathar Committee
+                        </h1>
+                    </div>
+                    <p class="text-base text-text-light leading-relaxed mt-3 max-w-md">
+                        Sharing updates, announcements and information about Masjid Noor Bathar
+                    </p>
+                </div>
+
+                <!-- Filter Section -->
+                <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                    <div class="flex-1">
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Select
+                            Month</label>
+                        <select id="month-filter"
+                            class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-primary-green focus:ring-1 focus:ring-primary-green bg-white pr-10 cursor-pointer">
+                            <option value="">Loading...</option>
+                        </select>
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Select
+                            Household</label>
+                        <select id="household-filter"
+                            class="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-primary-green focus:ring-1 focus:ring-primary-green bg-white pr-10 cursor-pointer">
+                            <option value="">All Households</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Data Table -->
+                <div
+                    class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm flex-1 flex flex-col min-h-0">
+                    <div class="overflow-x-auto flex-1">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col"
+                                        class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        #</th>
+                                    <th scope="col"
+                                        class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        Month</th>
+                                    <th scope="col"
+                                        class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        Name</th>
+                                    <th scope="col"
+                                        class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        Payment Date</th>
+                                    <th scope="col"
+                                        class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        Payment Mode</th>
+                                    <!-- Dynamic columns will be inserted here via JS -->
+                                    <th scope="col" id="col-rice" style="display:none;"
+                                        class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        Rice</th>
+                                    <th scope="col" id="col-gas" style="display:none;"
+                                        class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        Gas Refill</th>
+                                    <th scope="col" id="col-extra" style="display:none;"
+                                        class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        Extra Amount</th>
+                                    <th scope="col" id="col-reason" style="display:none;"
+                                        class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        Reason</th>
+                                    <th scope="col"
+                                        class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody id="data-table-body" class="bg-white divide-y divide-gray-100">
+                                <!-- Dynamic Rows -->
+                                <tr>
+                                    <td colspan="10" class="px-4 py-8 text-center text-gray-400 text-sm">Loading data...
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot id="table-footer" class="bg-gray-50 border-t border-gray-200">
+                                <tr>
+                                    <td id="total-label" colspan="5"
+                                        class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Total
+                                    </td>
+                                    <td id="total-amount"
+                                        class="px-4 py-3 text-right text-sm font-bold text-primary-green">
+                                        ₹0.00</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Share Button -->
+                <div class="flex justify-center mt-6">
+                    <button id="share-pdf-btn"
+                        class="btn-3d flex items-center gap-2 px-6 py-3 bg-primary-green text-white rounded-2xl text-sm font-bold shadow-lg hover:shadow-green-500/50">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z" />
+                            <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="white" stroke-width="1" fill="none" />
+                        </svg>
+                        Share as PDF
+                    </button>
+                </div>
+            </main>
+
+            <footer id="main-footer"
+                class="border-t border-gray-200 pt-4 mt-6 pb-4 flex flex-col md:flex-row justify-between items-center text-xs text-gray-400 shrink-0 gap-2">
+                <p>&copy; <span id="year"></span> Masjid Noor Bathar Committee.</p>
+                <div class="flex items-center gap-1">
+                    Made with <span class="text-red-500">❤️</span> by Ruhan
+                </div>
+            </footer>
+        </div>
+    </div>
+    <!-- END MAIN CONTENT WRAPPER -->
+
+    <!-- Admin Login Modal -->
+    <div id="login-modal"
+        class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex justify-center items-center p-4">
+        <div class="bg-white w-full max-w-sm p-10 rounded-3xl shadow-2xl relative animate-[fadeIn_0.3s_ease-out]">
+            <span
+                class="close-btn absolute top-5 right-6 text-gray-400 hover:text-black text-2xl font-bold cursor-pointer">&times;</span>
+
+            <div class="text-center mb-8">
+                <div class="w-14 h-14 bg-green-50 rounded-full flex justify-center items-center mx-auto mb-4">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                        class="text-primary-green">
+                        <path d="M3 21H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M5 21V10L12 5L19 10V21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <circle cx="12" cy="14" r="2" fill="currentColor" />
+                    </svg>
+                </div>
+                <h2 class="font-sans text-2xl font-bold text-gray-900 mb-2">Masjid Noor Admin</h2>
+            </div>
+
+            <form class="login-form flex flex-col gap-5">
+                <div class="form-group space-y-2">
+                    <label for="email" class="block text-sm font-semibold text-gray-700">Email Address</label>
+                    <div class="relative">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round"
+                            class="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
+                            </path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                        <input type="email" id="email" placeholder="name@example.com"
+                            class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-800 focus:outline-none focus:border-primary-green focus:ring-2 focus:ring-primary-green/10 transition-all">
+                    </div>
+                </div>
+                <div class="form-group space-y-2">
+                    <div class="flex justify-between items-center">
+                        <label for="password" class="block text-sm font-semibold text-gray-700">Password</label>
+                    </div>
+                    <div class="relative">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round"
+                            class="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        <input type="password" id="password" placeholder="Enter your password"
+                            class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-800 focus:outline-none focus:border-primary-green focus:ring-2 focus:ring-primary-green/10 transition-all">
+                    </div>
+                </div>
+                <button type="submit"
+                    class="sign-in-btn w-full py-3 bg-primary-green hover:bg-hover-green text-white rounded-lg text-sm font-semibold transition-colors mt-2">Sign
+                    In</button>
+                <div id="login-error" class="hidden text-red-500 text-sm mt-2 text-center"></div>
+            </form>
+
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Modal Logic
+        const modal = document.getElementById("login-modal");
+        const btn = document.querySelector(".admin-login");
+        const closeBtn = document.querySelector(".close-btn");
+
+        if (btn) {
+            btn.onclick = function (e) {
+                e.preventDefault();
+                modal.classList.remove("hidden");
+                modal.classList.add("flex");
+            }
+        }
+
+        // Close logic
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('close-btn')) {
+                modal.classList.add("hidden");
+                modal.classList.remove("flex");
+            }
+            if (e.target.id === 'login-modal') {
+                modal.classList.add("hidden");
+                modal.classList.remove("flex");
+            }
+        });
+
+        // --- Dynamic Header Animation (Rolling Upwards) ---
+        const headerElement = document.getElementById('dynamic-header');
+
+        if (headerElement) {
+            const headerContent = [
+                {
+                    html: "Masjid Noor<br>Bathar Committee",
+                    lang: "en",
+                    // Increased line-height (leading) to add space between lines
+                    classes: ["text-3xl", "md:text-4xl", "lg:text-[2.75rem]", "font-serif", "uppercase", "tracking-widest", "leading-[2.0]"]
+                },
+                {
+                    // Urdu Translation
+                    html: "مسجد نور بٹھار کمیٹی",
+                    lang: "ur",
+                    // Urdu generally needs compact line height or specific adjustments, keeping it clean
+                    classes: ["text-3xl", "md:text-5xl", "lg:text-[3.5rem]", "font-['Noto_Nastaliq_Urdu']", "leading-[1.6]", "tracking-normal"]
+                }
+            ];
+
+            let currentIndex = 0;
+            const switchInterval = 6000; // 6 seconds
+
+            // Initialize first state properly
+            headerElement.className = `w-full font-black text-primary-green transition-all duration-700 ease-in-out transform translate-y-0 opacity-100 ${headerContent[0].classes.join(' ')}`;
+
+            setInterval(() => {
+                // 1. Roll UP and OUT (Move to -100% Y)
+                headerElement.classList.replace('translate-y-0', '-translate-y-full');
+                headerElement.classList.replace('opacity-100', 'opacity-0');
+
+                // 2. Wait for transition to finish
+                setTimeout(() => {
+                    currentIndex = (currentIndex + 1) % headerContent.length;
+                    const nextContent = headerContent[currentIndex];
+
+                    // 3. Reset position to BOTTOM (100% Y) instantly without transition
+                    headerElement.classList.add('duration-0'); // Disable transition
+                    headerElement.classList.remove('duration-700', 'ease-in-out');
+
+                    headerElement.classList.replace('-translate-y-full', 'translate-y-full');
+
+                    // Update Content & Typography
+                    // Reset styling classes (keep structural/animation ones)
+                    headerElement.className = `w-full font-black text-primary-green transform translate-y-full opacity-0 duration-0 ${nextContent.classes.join(' ')}`;
+                    headerElement.innerHTML = nextContent.html;
+
+                    // Force Reflow/Repaint to ensure the jump to bottom is registered
+                    void headerElement.offsetWidth;
+
+                    // 4. Roll UP and IN (Move to 0 Y) with transition
+                    headerElement.classList.remove('duration-0');
+                    headerElement.classList.add('duration-700', 'ease-in-out');
+
+                    headerElement.classList.replace('translate-y-full', 'translate-y-0');
+                    headerElement.classList.replace('opacity-0', 'opacity-100');
+
+                }, 700); // Match transition duration
+
+            }, switchInterval);
+        }
+
+        // --- Hadith Rotation Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const hadithContainer = document.getElementById('hadith-content');
+            const urduEl = document.getElementById('hadith-urdu');
+            const englishEl = document.getElementById('hadith-english');
+            const sourceEl = document.getElementById('hadith-source');
+
+            let hadithList = [];
+            let currentIndex = -1; // Initialize to invalid to force first update based on time
+            const rotationInterval = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
+
+            async function fetchHadith() {
+                try {
+                    const response = await fetch('data/hadith.json');
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    hadithList = await response.json();
+
+                    if (hadithList.length > 0) {
+                        updateHadithByTime(); // Initial load
+                        startTimeBasedRotation(); // Start checker
+                    } else {
+                        urduEl.textContent = "حدیث دستیاب نہیں ہے۔";
+                        englishEl.textContent = "No Hadith available.";
+                    }
+                } catch (error) {
+                    console.error("Failed to load Hadith:", error);
+                    urduEl.textContent = "ڈیٹا لوڈ کرنے میں خرابی۔";
+                    englishEl.textContent = "Error loading content.";
+                }
+            }
+
+            function displayHadith(index) {
+                const item = hadithList[index];
+                if (!item) return;
+
+                urduEl.textContent = item.urdu;
+                englishEl.textContent = item.english;
+                sourceEl.textContent = `${item.source} • ${item.reference}`;
+            }
+
+            // Selects Hadith based on current time (12-hour epochs)
+            // This ensures uniqueness across reloads and consistency for all users at the same time
+            function updateHadithByTime() {
+                if (hadithList.length === 0) return;
+
+                const now = Date.now();
+                const epochIndex = Math.floor(now / rotationInterval);
+                const newIndex = epochIndex % hadithList.length;
+
+                if (newIndex !== currentIndex) {
+                    // Only animate value change if it's not the first load
+                    if (currentIndex !== -1) {
+                        hadithContainer.classList.remove('opacity-100');
+                        hadithContainer.classList.add('opacity-0');
+
+                        setTimeout(() => {
+                            displayHadith(newIndex);
+                            hadithContainer.classList.remove('opacity-0');
+                            hadithContainer.classList.add('opacity-100');
+                        }, 1000);
+                    } else {
+                        // Immediate display on first load
+                        displayHadith(newIndex);
+                    }
+                    currentIndex = newIndex;
+                }
+            }
+
+            function startTimeBasedRotation() {
+                // Check every minute if the 12-hour period has shifted
+                setInterval(updateHadithByTime, 60000);
+            }
+
+            fetchHadith();
+        });
+    </script>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
+        import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+        import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBZXysolCVG8cTnTiC3m5Hk-eaDIVJlOpc",
+            authDomain: "masjidnoor-72827.firebaseapp.com",
+            projectId: "masjidnoor-72827",
+            storageBucket: "masjidnoor-72827.firebasestorage.app",
+            messagingSenderId: "900577400989",
+            appId: "1:900577400989:web:8f8b5353cf96509435dc74",
+            measurementId: "G-HMHH4B5TJK"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Global data storage
+        let allSalaryData = [];
+        let allHouseholds = [];
+        let currentFilteredData = [];
+
+        // --- Helper: Get Normalized Month Year ---
+        function getMonthYear(data) {
+            if (!data.month) return null;
+            if (data.month.includes(' ')) return data.month; // Already "Month Year"
+
+            // Legacy Data Support
+            let year = null;
+            if (data.paymentDate) {
+                year = new Date(data.paymentDate).getFullYear();
+            } else if (data.timestamp && data.timestamp.toDate) {
+                year = data.timestamp.toDate().getFullYear();
+            }
+            if (!year) year = 2025; // Fallback
+            return `${data.month} ${year}`;
+        }
+
+        // Format date for display
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            try {
+                const date = new Date(dateStr);
+                return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+            } catch {
+                return dateStr;
+            }
+        }
+
+        // --- Load Households ---
+        async function loadHouseholds() {
+            const select = document.getElementById('household-filter');
+            try {
+                const querySnapshot = await getDocs(collection(db, "household names"));
+
+                select.innerHTML = '<option value="">All Households</option>';
+                allHouseholds = [];
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const name = data.Name || data.name || doc.id;
+                    allHouseholds.push({ id: doc.id, name: name });
+                    const option = document.createElement('option');
+                    // Store the name as value for matching with salary data's householdName field
+                    option.value = name;
+                    option.textContent = name;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Error loading households:", error);
+                select.innerHTML = '<option value="">Error loading data</option>';
+            }
+        }
+
+        // --- Load Salary Data and Populate Month Filter ---
+        async function loadSalaryData() {
+            const monthFilter = document.getElementById('month-filter');
+            const tableBody = document.getElementById('data-table-body');
+
+            try {
+                const q = query(collection(db, 'Salary Data'), orderBy('timestamp', 'desc'), limit(500));
+                const snapshot = await getDocs(q);
+
+                allSalaryData = [];
+                const uniqueMonths = new Set();
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const normalizedMonth = getMonthYear(data);
+                    if (normalizedMonth) {
+                        uniqueMonths.add(normalizedMonth);
+                    }
+                    allSalaryData.push({
+                        id: doc.id,
+                        ...data,
+                        normalizedMonth: normalizedMonth
+                    });
+                });
+
+                // Sort months (newest first)
+                const sortedMonths = Array.from(uniqueMonths).sort((a, b) => {
+                    const dateA = new Date(a + " 1");
+                    const dateB = new Date(b + " 1");
+                    return dateB - dateA;
+                });
+
+                // Populate month dropdown
+                monthFilter.innerHTML = '';
+                if (sortedMonths.length === 0) {
+                    monthFilter.innerHTML = '<option value="">No data available</option>';
+                } else {
+                    // Calculate previous month for default selection
+                    const now = new Date();
+                    const prevMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                    const prevMonthName = prevMonthDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+                    // Add "All Months" option first
+                    const allOption = document.createElement('option');
+                    allOption.value = '';
+                    allOption.textContent = 'All Months';
+                    monthFilter.appendChild(allOption);
+
+                    let defaultFound = false;
+                    sortedMonths.forEach((month) => {
+                        const opt = document.createElement('option');
+                        opt.value = month;
+                        opt.textContent = month;
+                        // Select previous month as default if it exists
+                        if (month === prevMonthName) {
+                            opt.selected = true;
+                            defaultFound = true;
+                        }
+                        monthFilter.appendChild(opt);
+                    });
+
+                    // If previous month not found in data, select the most recent month
+                    if (!defaultFound && sortedMonths.length > 0) {
+                        monthFilter.value = sortedMonths[0];
+                    }
+                }
+
+                // Display data for first month
+                if (sortedMonths.length > 0) {
+                    filterAndDisplayData();
+                } else {
+                    tableBody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-gray-400 text-sm">No data available</td></tr>';
+                }
+
+            } catch (error) {
+                console.error("Error loading salary data:", error);
+                tableBody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-red-500 text-sm">Error loading data</td></tr>';
+            }
+        }
+
+        // --- Filter and Display Data ---
+        function filterAndDisplayData() {
+            const monthFilter = document.getElementById('month-filter');
+            const householdFilter = document.getElementById('household-filter');
+            const tableBody = document.getElementById('data-table-body');
+            const totalAmount = document.getElementById('total-amount');
+
+            const selectedMonth = monthFilter.value;
+            const selectedHousehold = householdFilter.value;
+
+            // Filter data
+            currentFilteredData = allSalaryData.filter(item => {
+                const monthMatch = !selectedMonth || item.normalizedMonth === selectedMonth;
+                // Match by householdName (case-insensitive comparison for robustness)
+                const itemHouseholdName = (item.householdName || '').toLowerCase().trim();
+                const selectedHouseholdLower = (selectedHousehold || '').toLowerCase().trim();
+                const householdMatch = !selectedHousehold || itemHouseholdName === selectedHouseholdLower;
+                return monthMatch && householdMatch;
+            });
+
+            // Sort by timestamp (when added to Firebase), entries without payment date go last
+            currentFilteredData.sort((a, b) => {
+                // Check if entries have payment dates
+                const aHasDate = a.paymentDate && a.paymentDate !== '';
+                const bHasDate = b.paymentDate && b.paymentDate !== '';
+
+                // Entries without payment date go last
+                if (aHasDate && !bHasDate) return -1;
+                if (!aHasDate && bHasDate) return 1;
+
+                // Both have same date status, sort by timestamp (when added to Firebase)
+                const tsA = a.timestamp?.toDate ? a.timestamp.toDate() : (a.timestamp ? new Date(a.timestamp) : new Date(0));
+                const tsB = b.timestamp?.toDate ? b.timestamp.toDate() : (b.timestamp ? new Date(b.timestamp) : new Date(0));
+                return tsA - tsB;
+            });
+
+            // ===== DYNAMIC COLUMN VISIBILITY =====
+            // Check which optional columns have data (robust checks with nested supplies)
+            const hasRice = currentFilteredData.some(item => {
+                const supplies = item.supplies || {};
+                return supplies.rice === true || supplies.rice === 'true' || !!supplies.rice;
+            });
+            const hasGas = currentFilteredData.some(item => {
+                const supplies = item.supplies || {};
+                // Check if gas boolean is true
+                return supplies.gas === true || supplies.gas === 'true' || !!supplies.gas;
+            });
+            const hasExtra = currentFilteredData.some(item => (parseFloat(item.extraAmount || item.ExtraAmount) || 0) > 0);
+
+            // Reason checks varianceReason
+            const hasReason = currentFilteredData.some(item => (item.varianceReason || '').toString().trim() !== '');
+
+            // Show/hide column headers (Gas Header updated to "Gas Amount")
+            document.getElementById('col-rice').style.display = hasRice ? '' : 'none';
+            const gasHeader = document.getElementById('col-gas');
+            gasHeader.style.display = hasGas ? '' : 'none';
+            gasHeader.innerText = "Gas Amount"; // Update header text
+
+            document.getElementById('col-extra').style.display = hasExtra ? '' : 'none';
+            document.getElementById('col-reason').style.display = hasReason ? '' : 'none';
+
+            // Count visible columns for colspan
+            const baseColumns = 6; // #, Month, Name, Date, Mode, Amount
+            const dynamicColumns = (hasRice ? 1 : 0) + (hasGas ? 1 : 0) + (hasExtra ? 1 : 0) + (hasReason ? 1 : 0);
+            const totalColumns = baseColumns + dynamicColumns;
+
+            // Display data
+            if (currentFilteredData.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="${totalColumns}" class="px-4 py-8 text-center text-gray-400 text-sm">No entries found for the selected filters</td></tr>`;
+                totalAmount.textContent = '₹0.00';
+                // Update footer colspan
+                document.getElementById('total-label').setAttribute('colspan', totalColumns - 1);
+                return;
+            }
+
+            let total = 0;
+            tableBody.innerHTML = '';
+
+            currentFilteredData.forEach((item, index) => {
+                const amount = parseFloat(item.salaryAmount) || 0;
+                const extraAmount = parseFloat(item.extraAmount || item.ExtraAmount) || 0;
+
+                // Nested Supplies Access
+                const supplies = item.supplies || {};
+                const isRice = supplies.rice === true || supplies.rice === 'true' || !!supplies.rice;
+                const hasGasEntry = supplies.gas === true || supplies.gas === 'true' || !!supplies.gas;
+                // Robust gasAmount check (nested or top-level, varied casing)
+                const rawGas = supplies.gasAmount || supplies.GasAmount || item.gasAmount || item.GasAmount;
+                const gasAmount = hasGasEntry ? (parseFloat(rawGas) || 0) : 0;
+
+                // Total calculation
+                const totalItemAmount = amount + extraAmount + gasAmount;
+                total += totalItemAmount;
+
+                const row = document.createElement('tr');
+                row.className = 'table-row hover:bg-gray-50 transition-colors';
+
+                let rowHTML = `
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${index + 1}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">${item.normalizedMonth || '-'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">${item.householdName || 'Unknown'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">${formatDate(item.paymentDate)}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                        <span class="px-2 py-1 rounded-full text-xs font-medium ${getPaymentModeClass(item.paymentMode)}">${item.paymentMode || '-'}</span>
+                    </td>`;
+
+                // Add dynamic columns if visible
+                if (hasRice) {
+                    rowHTML += `<td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-700">${isRice ? 'Yes' : 'No'}</td>`;
+                }
+                if (hasGas) {
+                    rowHTML += `<td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-700">${gasAmount > 0 ? '₹' + gasAmount.toFixed(0) : '-'}</td>`;
+                }
+                if (hasExtra) {
+                    rowHTML += `<td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-700">${extraAmount > 0 ? '₹' + extraAmount.toFixed(0) : '-'}</td>`;
+                }
+                if (hasReason) {
+                    rowHTML += `<td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">${item.varianceReason || '-'}</td>`;
+                }
+
+                // Always add Amount column last
+                rowHTML += `<td class="px-4 py-3 whitespace-nowrap text-sm text-right font-medium text-gray-900">₹${totalItemAmount.toFixed(2)}</td>`;
+
+                row.innerHTML = rowHTML;
+                tableBody.appendChild(row);
+            });
+
+            totalAmount.textContent = `₹${total.toFixed(2)}`;
+
+            // Update footer colspan
+            document.getElementById('total-label').setAttribute('colspan', totalColumns - 1);
+
+            // Update Dashboard
+            updateDashboardNew();
+        }
+
+        // --- DASHBOARD CHARTS LOGIC ---
+        let householdChart = null;
+        let financialChart = null;
+        let modesChart = null;
+        let topContributorsChart = null; // Punctual
+        let worstContributorsChart = null; // Worst
+        let indivHistoryChart = null;
+        let indivBreakdownChart = null;
+
+        function initCharts() {
+            // Global Charts
+            const hhContainer = document.getElementById('chart-household');
+            if (hhContainer) {
+                if (!householdChart) {
+                    householdChart = echarts.init(hhContainer);
+                    window.addEventListener('resize', () => householdChart.resize());
+                }
+            }
+
+            const finContainer = document.getElementById('chart-financial');
+            if (finContainer) {
+                if (!financialChart) {
+                    financialChart = echarts.init(finContainer);
+                    window.addEventListener('resize', () => financialChart.resize());
+                }
+            }
+
+            const modesContainer = document.getElementById('chart-modes');
+            if (modesContainer) {
+                if (!modesChart) {
+                    modesChart = echarts.init(modesContainer);
+                    window.addEventListener('resize', () => modesChart.resize());
+                }
+            }
+
+            const topContainer = document.getElementById('chart-top-contributors');
+            if (topContainer) {
+                if (!topContributorsChart) {
+                    topContributorsChart = echarts.init(topContainer);
+                    window.addEventListener('resize', () => topContributorsChart.resize());
+                }
+            }
+
+            const worstContainer = document.getElementById('chart-worst-contributors');
+            if (worstContainer) {
+                if (!worstContributorsChart) {
+                    worstContributorsChart = echarts.init(worstContainer);
+                    window.addEventListener('resize', () => worstContributorsChart.resize());
+                }
+            }
+
+            // Individual Charts
+            const indivHistContainer = document.getElementById('chart-indiv-history');
+            if (indivHistContainer) {
+                if (!indivHistoryChart) {
+                    indivHistoryChart = echarts.init(indivHistContainer);
+                    window.addEventListener('resize', () => indivHistoryChart.resize());
+                }
+            }
+
+            const indivBreakContainer = document.getElementById('chart-indiv-breakdown');
+            if (indivBreakContainer) {
+                if (!indivBreakdownChart) {
+                    indivBreakdownChart = echarts.init(indivBreakContainer);
+                    window.addEventListener('resize', () => indivBreakdownChart.resize());
+                }
+            }
+        }
+
+        function updateDashboard() {
+            const dashboardContainer = document.getElementById('dashboard-container');
+            const hiddenState = document.getElementById('dashboard-hidden-state');
+            const householdFilter = document.getElementById('household-filter');
+            const selectedHousehold = householdFilter.value;
+
+            // 1. Conditional Visibility
+            if (selectedHousehold) {
+                // Hide dashboard, show warning
+                if (dashboardContainer) dashboardContainer.classList.add('hidden');
+                if (dashboardContainer) dashboardContainer.classList.remove('flex');
+
+                if (hiddenState) hiddenState.classList.remove('hidden');
+                if (hiddenState) hiddenState.classList.add('flex');
+                return; // Stop updating charts
+            } else {
+                // Show dashboard, hide warning
+                if (dashboardContainer) dashboardContainer.classList.remove('hidden');
+                // Ensure it has the correct flex classes for desktop
+                if (dashboardContainer) dashboardContainer.classList.add('hidden', 'md:flex');
+                // Wait, logic check: 'hidden md:flex' is the default class string. 
+                // If I remove 'hidden', it shows on mobile too? 
+                // The original class was: "hidden md:flex ...".
+                // So removing 'hidden' makes it 'md:flex' which is fine for desktop, but what about mobile?
+                // If I remove 'hidden', on mobile (default) it becomes block/flex depending on other styles.
+                // Let's reset to exact standard classes to be safe.
+                if (dashboardContainer) dashboardContainer.className = "hidden md:flex md:w-1/2 lg:w-[45%] bg-slate-50 flex-col overflow-y-auto scrollbar-default relative shrink-0 border-r border-gray-200";
+
+                if (hiddenState) hiddenState.classList.add('hidden');
+                if (hiddenState) hiddenState.classList.remove('flex');
+            }
+
+            // Initialize if not already
+            if (!householdChart) initCharts();
+
+            // 2. Data Processing
+            // We use 'currentFilteredData' which is already filtered by Month (and Household=All)
+
+            // A. Household Stats
+            // Total Households: count from 'allHouseholds' (or unique in salary data if that's preferred, but 'allHouseholds' is better ref)
+            // Paid: Count unique names in 'currentFilteredData' (since filters are applied)
+            // Pending: Total - Paid
+
+            // Note: 'allHouseholds' might be empty if not loaded yet or if we rely on salary data. 
+            // 'allHouseholds' is loaded in loadHouseholds().
+            const totalHouseholdsCount = allHouseholds.length || 0;
+            const paidHouseholdsCount = new Set(currentFilteredData.map(d => d.householdName)).size;
+            const pendingHouseholdsCount = Math.max(0, totalHouseholdsCount - paidHouseholdsCount);
+
+            // B. Financial Stats
+            // Total Salary: Exclusively aggregate Salary Amount
+            const totalSalaryOnly = currentFilteredData.reduce((sum, d) => sum + (parseFloat(d.salaryAmount) || 0), 0);
+            // Total Amount Collected: Salary + Extra + Gas Refill
+            const totalCollectedCompound = currentFilteredData.reduce((sum, d) => {
+                return sum + (parseFloat(d.salaryAmount) || 0) + (parseFloat(d.extraAmount) || 0) + (parseFloat(d.gasRefill) || 0);
+            }, 0);
+
+            // Update Text Scorecards
+            // Note: We updated IDs in HTML to 'dash-total-salary-display' and 'dash-total-collected-display'
+            const salaryEl = document.getElementById('dash-total-salary-display'); // Was dash-total-collection
+            const collectedEl = document.getElementById('dash-total-collected-display'); // Was dash-total-salary
+
+            // Fallback for safety if HTML update failed (though we are doing it in same tool) or old IDs exist
+            // Actually, since we update HTML in this same tool call, the new IDs will be present.
+            if (salaryEl) salaryEl.textContent = `₹${totalSalaryOnly.toLocaleString('en-IN')}`;
+            if (collectedEl) collectedEl.textContent = `₹${totalCollectedCompound.toLocaleString('en-IN')}`;
+
+
+            // C. Payment Modes
+            const modes = {};
+            currentFilteredData.forEach(d => {
+                const m = d.paymentMode || 'Unknown';
+                modes[m] = (modes[m] || 0) + 1;
+            });
+            const modesData = Object.keys(modes).map(k => ({ value: modes[k], name: k }));
+
+
+            // 3. Render Charts (3D-ish aesthetics)
+
+            // Chart 1: Household Stats (Gauge/Pie)
+            householdChart.setOption({
+                tooltip: { trigger: 'item' },
+                legend: {
+                    orient: 'vertical',
+                    right: 0,
+                    top: 'center',
+                    align: 'left',
+                    itemGap: 20
+                },
+                series: [
+                    {
+                        name: 'Households',
+                        type: 'pie',
+                        radius: ['40%', '70%'],
+                        center: ['40%', '50%'], // Shift center left to make room for legend
+                        avoidLabelOverlap: false,
+                        itemStyle: {
+                            borderRadius: 10,
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        },
+                        label: {
+                            show: false,
+                            position: 'center'
+                        },
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontSize: 20,
+                                fontWeight: 'bold'
+                            }
+                        },
+                        labelLine: { show: false },
+                        data: [
+                            { value: paidHouseholdsCount, name: 'Paid', itemStyle: { color: '#006847' } }, // Primary Green
+                            { value: pendingHouseholdsCount, name: 'Pending', itemStyle: { color: '#fbbf24' } } // Amber/Yellow
+                        ]
+                    }
+                ]
+            });
+
+            // Chart 2: Financials (Bar)
+            financialChart.setOption({
+                tooltip: { trigger: 'axis' },
+                grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+                xAxis: { type: 'category', data: ['Total Salary', 'Total Collected'] },
+                yAxis: { type: 'value' },
+                series: [
+                    {
+                        data: [
+                            { value: totalSalaryOnly, itemStyle: { color: '#006847' }, name: 'Total Salary' },
+                            { value: totalCollectedCompound, itemStyle: { color: '#3b82f6' }, name: 'Total Collected' }
+                        ],
+                        type: 'bar',
+                        showBackground: true,
+                        backgroundStyle: { color: 'rgba(180, 180, 180, 0.2)' },
+                        barWidth: '50%',
+                        label: { show: true, position: 'top', formatter: '₹{c}' }
+                    }
+                ]
+            });
+
+            // Chart 3: Payment Modes (Donut/Pie)
+            modesChart.setOption({
+                tooltip: { trigger: 'item' },
+                legend: { top: '5%', left: 'center' },
+                series: [
+                    {
+                        name: 'Payment Mode',
+                        type: 'pie',
+                        radius: ['40%', '70%'],
+                        center: ['50%', '60%'],
+                        startAngle: 180,
+                        endAngle: 360,
+                        data: modesData.length ? modesData : [{ value: 0, name: 'No Data' }],
+                        itemStyle: {
+                            borderRadius: 5
+                        }
+                    }
+                ]
+            });
+        }
+
+        function updateGlobalDashboard() {
+            // Wait for charts to be ready
+            if (!householdChart || !financialChart || !modesChart) {
+                try { initCharts(); } catch (e) { }
+            }
+            try {
+                if (householdChart) householdChart.resize();
+                if (financialChart) financialChart.resize();
+                if (modesChart) modesChart.resize();
+                if (topContributorsChart) topContributorsChart.resize();
+                if (worstContributorsChart) worstContributorsChart.resize();
+            } catch (e) { }
+
+            // 1. Data Processing
+            // A. Household Stats
+            const totalHouseholdsCount = allHouseholds.length || 0;
+            const paidHouseholdsCount = new Set(currentFilteredData.map(d => d.householdName)).size;
+            const pendingHouseholdsCount = Math.max(0, totalHouseholdsCount - paidHouseholdsCount);
+
+            // B. Financial Stats
+            const totalSalaryOnly = currentFilteredData.reduce((sum, d) => sum + (parseFloat(d.salaryAmount) || 0), 0);
+            const totalCollectedCompound = currentFilteredData.reduce((sum, d) => {
+                return sum + (parseFloat(d.salaryAmount) || 0) + (parseFloat(d.extraAmount) || 0) + (parseFloat(d.gasRefill) || 0);
+            }, 0);
+
+            // Update Text Scorecards
+            const salaryEl = document.getElementById('dash-total-salary-display');
+            const collectedEl = document.getElementById('dash-total-collected-display');
+            if (salaryEl) salaryEl.textContent = `₹${totalSalaryOnly.toLocaleString('en-IN')}`;
+            if (collectedEl) collectedEl.textContent = `₹${totalCollectedCompound.toLocaleString('en-IN')}`;
+
+            // C. Payment Modes
+            const modes = {};
+            currentFilteredData.forEach(d => {
+                const m = d.paymentMode || 'Unknown';
+                modes[m] = (modes[m] || 0) + 1;
+            });
+            const modesData = Object.keys(modes).map(k => ({ value: modes[k], name: k }));
+
+            // D. PROPORTIONAL RANKING SYSTEM (Chronological Audit)
+            // 1. Aggregate payments per household
+            const householdStats = {}; // { name: { totalCount: 0, punctualCount: 0 } }
+
+            allSalaryData.forEach(d => {
+                if (!d.paymentDate) return; // Skip invalid audit records
+
+                const name = (d.householdName || 'Unknown').trim();
+                if (!householdStats[name]) {
+                    householdStats[name] = { totalCount: 0, punctualCount: 0 };
+                }
+
+                householdStats[name].totalCount++;
+
+                // Chronological Check: 6th of month deadline
+                const date = new Date(d.paymentDate);
+                const day = date.getDate();
+
+                if (day <= 6) {
+                    householdStats[name].punctualCount++;
+                }
+            });
+
+            // 2. Calculate Ratio (P) and Filter
+            const punctualityScores = Object.entries(householdStats).map(([name, stats]) => {
+                const ratio = (stats.punctualCount / stats.totalCount) * 100;
+                return { name, ratio, ...stats };
+            });
+
+            // 3. Top 5 Punctual (Ratio >= 70%)
+            const topPunctual = punctualityScores
+                .filter(x => x.ratio >= 70)
+                .sort((a, b) => b.ratio - a.ratio) // Descending
+                .slice(0, 5);
+
+            // 4. Top 5 Worst (Ratio <= 30%)
+            const topWorst = punctualityScores
+                .filter(x => x.ratio <= 30)
+                .sort((a, b) => a.ratio - b.ratio) // Ascending (0% is worst)
+                .slice(0, 5);
+
+            // Data for Charts
+            // Punctual
+            let topPunctualNames = topPunctual.map(x => x.name).reverse();
+            let topPunctualRatios = topPunctual.map(x => x.ratio.toFixed(1)).reverse();
+
+            // Worst
+            // For worst, e.g. 10%, 20%. We want to show them effectively.
+            // Bar chart: names on Y axis.
+            let topWorstNames = topWorst.map(x => x.name).reverse();
+            let topWorstRatios = topWorst.map(x => x.ratio.toFixed(1)).reverse();
+
+
+            // 2. Render Global Charts
+            // Chart 1: Household Stats (3D Donut)
+            if (householdChart) {
+                householdChart.setOption({
+                    tooltip: { trigger: 'item', backgroundColor: 'rgba(255, 255, 255, 0.9)' },
+                    legend: { orient: 'vertical', right: 0, top: 'center', align: 'left', itemGap: 20, icon: 'circle' },
+                    series: [
+                        {
+                            name: 'Households',
+                            type: 'pie',
+                            radius: ['50%', '75%'],
+                            center: ['40%', '50%'],
+                            avoidLabelOverlap: false,
+                            itemStyle: {
+                                borderRadius: 10,
+                                borderColor: '#fff',
+                                borderWidth: 4,
+                                shadowBlur: 20,
+                                shadowColor: 'rgba(0, 0, 0, 0.15)'
+                            },
+                            label: { show: false, position: 'center' },
+                            emphasis: {
+                                label: { show: true, fontSize: 24, fontWeight: 'bold' },
+                                itemStyle: {
+                                    shadowBlur: 30,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.4)',
+                                    scale: 1.05
+                                }
+                            },
+                            labelLine: { show: false },
+                            data: [
+                                {
+                                    value: paidHouseholdsCount,
+                                    name: 'Paid',
+                                    itemStyle: {
+                                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                            { offset: 0, color: '#34d399' },
+                                            { offset: 1, color: '#059669' }
+                                        ])
+                                    }
+                                },
+                                {
+                                    value: pendingHouseholdsCount,
+                                    name: 'Pending',
+                                    itemStyle: {
+                                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                            { offset: 0, color: '#fbbf24' },
+                                            { offset: 1, color: '#d97706' }
+                                        ])
+                                    }
+                                }
+                            ],
+                            animationType: 'scale',
+                            animationEasing: 'elasticOut',
+                            animationDelay: function (idx) { return Math.random() * 200; }
+                        }
+                    ]
+                });
+            }
+
+            // Chart 2: Financials
+            if (financialChart) {
+                financialChart.setOption({
+                    tooltip: { trigger: 'axis', backgroundColor: 'rgba(255, 255, 255, 0.9)' },
+                    grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+                    xAxis: { type: 'category', data: ['Total Salary', 'Total Collected'], axisLine: { show: false }, axisTick: { show: false } },
+                    yAxis: { type: 'value', splitLine: { lineStyle: { type: 'dashed', color: '#e5e7eb' } } },
+                    series: [
+                        {
+                            data: [
+                                {
+                                    value: totalSalaryOnly,
+                                    name: 'Total Salary',
+                                    itemStyle: {
+                                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#4ade80' }, { offset: 1, color: '#166534' }]),
+                                        borderRadius: [15, 15, 0, 0],
+                                        shadowBlur: 15,
+                                        shadowColor: 'rgba(22, 101, 52, 0.4)',
+                                        shadowOffsetY: 5
+                                    }
+                                },
+                                {
+                                    value: totalCollectedCompound,
+                                    name: 'Total Collected',
+                                    itemStyle: {
+                                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#60a5fa' }, { offset: 1, color: '#1e40af' }]),
+                                        borderRadius: [15, 15, 0, 0],
+                                        shadowBlur: 15,
+                                        shadowColor: 'rgba(30, 64, 175, 0.4)',
+                                        shadowOffsetY: 5
+                                    }
+                                }
+                            ],
+                            type: 'bar',
+                            showBackground: true,
+                            backgroundStyle: { color: '#f3f4f6', borderRadius: [15, 15, 0, 0] },
+                            barWidth: '45%',
+                            label: { show: true, position: 'top', formatter: '₹{c}', fontWeight: 'bold' },
+                            animationEasing: 'elasticOut',
+                            animationDelay: 200
+                        }
+                    ]
+                });
+            }
+
+            // Chart 3: Payment Modes
+            if (modesChart) {
+                // Gradient Palette
+                const gradients = [
+                    [{ offset: 0, color: '#f472b6' }, { offset: 1, color: '#db2777' }], // Pink
+                    [{ offset: 0, color: '#818cf8' }, { offset: 1, color: '#4f46e5' }], // Indigo
+                    [{ offset: 0, color: '#34d399' }, { offset: 1, color: '#059669' }], // Emerald
+                    [{ offset: 0, color: '#fbbf24' }, { offset: 1, color: '#d97706' }], // Amber
+                ];
+
+                const coloredModesData = modesData.length ? modesData.map((d, i) => {
+                    const g = gradients[i % gradients.length];
+                    return {
+                        value: d.value,
+                        name: d.name,
+                        itemStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 1, 1, g)
+                        }
+                    };
+                }) : [{ value: 0, name: 'No Data', itemStyle: { color: '#e5e7eb' } }];
+
+                modesChart.setOption({
+                    tooltip: { trigger: 'item', backgroundColor: 'rgba(255, 255, 255, 0.9)' },
+                    legend: { top: '5%', left: 'center', icon: 'circle' },
+                    series: [
+                        {
+                            name: 'Payment Mode',
+                            type: 'pie',
+                            radius: ['45%', '75%'],
+                            center: ['50%', '60%'],
+                            startAngle: 180,
+                            endAngle: 360,
+                            data: coloredModesData,
+                            itemStyle: {
+                                borderRadius: 8,
+                                borderColor: '#fff',
+                                borderWidth: 3,
+                                shadowBlur: 10,
+                                shadowColor: 'rgba(0, 0, 0, 0.2)'
+                            },
+                            emphasis: {
+                                itemStyle: { shadowBlur: 20, shadowOffsetX: 0, shadowColor: 'rgba(0,0,0,0.4)', scale: 1.1 }
+                            }
+                        }
+                    ]
+                });
+            }
+
+            // Chart 4: Top Punctual (Fun & 3D)
+            if (topContributorsChart) {
+                topContributorsChart.setOption({
+                    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: '{b}: {c}%' },
+                    grid: { left: '3%', right: '15%', bottom: '3%', containLabel: true },
+                    xAxis: { type: 'value', max: 100, name: '%', splitLine: { show: false } },
+                    yAxis: {
+                        type: 'category',
+                        data: topPunctualNames,
+                        axisTick: { show: false },
+                        axisLine: { show: false },
+                        axisLabel: {
+                            formatter: function (value) {
+                                if (window.innerWidth < 768) {
+                                    return value.length > 15 ? value.substring(0, 15) + '...' : value;
+                                }
+                                return value;
+                            },
+                            width: 100,
+                            overflow: 'break'
+                        }
+                    },
+                    series: [
+                        {
+                            name: 'Punctuality',
+                            type: 'bar',
+                            data: topPunctualRatios,
+                            itemStyle: {
+                                color: new echarts.graphic.LinearGradient(1, 0, 0, 0, [
+                                    { offset: 0, color: '#2dd4bf' }, // Teal 400
+                                    { offset: 1, color: '#0f766e' }  // Teal 700
+                                ]),
+                                borderRadius: [0, 20, 20, 0], // Rounded right edge
+                                shadowBlur: 8,
+                                shadowColor: 'rgba(15, 118, 110, 0.4)',
+                                shadowOffsetY: 3
+                            },
+                            showBackground: true,
+                            backgroundStyle: { color: '#f3f4f6', borderRadius: [0, 20, 20, 0] },
+                            barWidth: '60%',
+                            label: { show: true, position: 'right', formatter: '{c}%', fontWeight: 'bold', color: '#0f766e' },
+                            animationDuration: 1000,
+                            animationEasing: 'cubicOut'
+                        }
+                    ]
+                });
+            }
+
+            // Chart 5: Worst Contributors (Fun & 3D)
+            if (worstContributorsChart) {
+                worstContributorsChart.setOption({
+                    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: '{b}: {c}% Punctual' },
+                    grid: { left: '3%', right: '15%', bottom: '3%', containLabel: true },
+                    xAxis: { type: 'value', max: 100, name: '% (On-Time)', splitLine: { show: false } },
+                    yAxis: {
+                        type: 'category',
+                        data: topWorstNames,
+                        axisTick: { show: false },
+                        axisLine: { show: false },
+                        axisLabel: {
+                            formatter: function (value) {
+                                if (window.innerWidth < 768) {
+                                    return value.length > 15 ? value.substring(0, 15) + '...' : value;
+                                }
+                                return value;
+                            },
+                            width: 100, // Safe default
+                            overflow: 'break'
+                        }
+                    },
+                    series: [
+                        {
+                            name: 'Punctuality',
+                            type: 'bar',
+                            data: topWorstRatios,
+                            itemStyle: {
+                                color: new echarts.graphic.LinearGradient(1, 0, 0, 0, [
+                                    { offset: 0, color: '#f87171' }, // Red 400
+                                    { offset: 1, color: '#b91c1c' }  // Red 700
+                                ]),
+                                borderRadius: [0, 20, 20, 0],
+                                shadowBlur: 8,
+                                shadowColor: 'rgba(185, 28, 28, 0.4)',
+                                shadowOffsetY: 3
+                            },
+                            showBackground: true,
+                            backgroundStyle: { color: '#f3f4f6', borderRadius: [0, 20, 20, 0] },
+                            barWidth: '60%',
+                            label: { show: true, position: 'right', formatter: '{c}%', fontWeight: 'bold', color: '#b91c1c' },
+                            animationDuration: 1000,
+                            animationEasing: 'cubicOut'
+                        }
+                    ]
+                });
+            }
+
+        }
+
+        function updateIndividualDashboard(householdName) {
+            // Lazy Init
+            if (!indivHistoryChart || !indivBreakdownChart) {
+                try { initCharts(); } catch (e) { console.warn("Chart auto-init failed", e); }
+            }
+            try {
+                if (indivHistoryChart) indivHistoryChart.resize();
+                if (indivBreakdownChart) indivBreakdownChart.resize();
+            } catch (e) { }
+
+            // Safe Name Matching
+            const targetName = (householdName || '').toLowerCase().trim();
+            const householdAllData = allSalaryData.filter(d => {
+                const dName = (d.householdName || d.Name || d.name || '').toLowerCase().trim();
+                return dName === targetName;
+            });
+
+            // Display: Name
+            const nameEl = document.getElementById('indiv-name');
+            if (nameEl) nameEl.textContent = householdName;
+
+            // Helper for robust amount calculation
+            const getAmounts = (item) => {
+                const salary = parseFloat(item.salaryAmount) || 0;
+                const extra = parseFloat(item.extraAmount || item.ExtraAmount) || 0;
+
+                // Robust Gas/Supplies Logic
+                const supplies = item.supplies || {};
+                const hasGasEntry = supplies.gas === true || supplies.gas === 'true' || !!supplies.gas;
+                const rawGas = supplies.gasAmount || supplies.GasAmount || item.gasAmount || item.GasAmount || item.gasRefill;
+                const gas = hasGasEntry ? (parseFloat(rawGas) || 0) : 0;
+
+                return { salary, extra, gas, total: salary + extra + gas };
+            };
+
+            // Metrics: Total Contributed (Filtered View)
+            // Use currentFilteredData ensuring we only count visible data
+            const totalContributedFiltered = currentFilteredData.reduce((sum, d) => {
+                return sum + getAmounts(d).total;
+            }, 0);
+
+            const totalEl = document.getElementById('indiv-total-contributed');
+            if (totalEl) totalEl.textContent = `₹${totalContributedFiltered.toLocaleString('en-IN')}`;
+
+            // Metric: Pending Months (All Time logic)
+            const currentYear = new Date().getFullYear();
+            const distinctMonthsPaid = new Set();
+
+            householdAllData.forEach(d => {
+                if (d.paymentDate) {
+                    const date = new Date(d.paymentDate);
+                    if (date.getFullYear() === currentYear) {
+                        const mIndex = date.getMonth();
+                        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                        distinctMonthsPaid.add(monthNames[mIndex]);
+                    }
+                } else if (d.normalizedMonth && d.normalizedMonth.includes(currentYear)) {
+                    const mName = d.normalizedMonth.split(' ')[0];
+                    distinctMonthsPaid.add(mName);
+                }
+            });
+
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const currentMonthIndex = new Date().getMonth();
+            let pendingCount = 0;
+
+            for (let i = 0; i <= currentMonthIndex; i++) {
+                let paid = false;
+                for (let paidMonth of distinctMonthsPaid) {
+                    if (paidMonth.toLowerCase().startsWith(monthNames[i].toLowerCase().slice(0, 3))) {
+                        paid = true;
+                        break;
+                    }
+                }
+                if (!paid) pendingCount++;
+            }
+
+            // Update Pending UI
+            const pendingEl = document.getElementById('indiv-pending-count');
+            if (pendingEl) pendingEl.textContent = pendingCount;
+            const badge = document.getElementById('indiv-status-badge');
+            if (badge) {
+                if (pendingCount === 0) {
+                    badge.className = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 mt-2";
+                    badge.textContent = "Paid up to date";
+                } else {
+                    badge.className = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 mt-2";
+                    badge.textContent = "Payment Required";
+                }
+            }
+
+            // Metric: Consistency Streak (Sequential Audit)
+            // 1. Sort data by Payment Date Ascending (Earliest to Latest)
+            const sortedByDate = householdAllData
+                .filter(d => d.paymentDate)
+                .sort((a, b) => new Date(a.paymentDate) - new Date(b.paymentDate));
+
+            let currentStreak = 0;
+            let lastStreakMonthKey = null; // YYYY-M
+
+            sortedByDate.forEach(d => {
+                const date = new Date(d.paymentDate);
+                const day = date.getDate();
+                const monthKey = `${date.getFullYear()}-${date.getMonth()}`;
+
+                if (day > 6) {
+                    // "Break" Condition: Payment after 6th resets streak immediately
+                    currentStreak = 0;
+                    lastStreakMonthKey = null;
+                } else {
+                    // Payment is on or before the 6th
+                    if (currentStreak === 0) {
+                        // Initial State or Recovery: Start streak
+                        currentStreak = 1;
+                        lastStreakMonthKey = monthKey;
+                    } else {
+                        // Check if consecutive month
+                        // Parse last key
+                        const [lastYear, lastMonth] = lastStreakMonthKey.split('-').map(Number);
+
+                        // Expected next month
+                        let expectedNextMonth = lastMonth + 1;
+                        let expectedNextYear = lastYear;
+                        if (expectedNextMonth > 11) {
+                            expectedNextMonth = 0;
+                            expectedNextYear++;
+                        }
+
+                        if (date.getFullYear() === expectedNextYear && date.getMonth() === expectedNextMonth) {
+                            // Is consecutive
+                            currentStreak++;
+                            lastStreakMonthKey = monthKey;
+                        } else if (date.getFullYear() === lastYear && date.getMonth() === lastMonth) {
+                            // Same month (duplicate payment?), ignore or treat as maintain?
+                            // Treating as same month payment, streak doesn't increase but doesn't break
+                        } else {
+                            // Gap detected
+                            currentStreak = 1; // Restart
+                            lastStreakMonthKey = monthKey;
+                        }
+                    }
+                }
+            });
+
+            const streakEl = document.getElementById('indiv-streak-count');
+            if (streakEl) streakEl.textContent = `${currentStreak} Months`;
+
+            // Chart 1: History
+            householdAllData.sort((a, b) => {
+                const dA = a.paymentDate ? new Date(a.paymentDate) : new Date(0);
+                const dB = b.paymentDate ? new Date(b.paymentDate) : new Date(0);
+                return dA - dB;
+            });
+            const historyDates = householdAllData.map(d => formatDate(d.paymentDate));
+            const historyAmounts = householdAllData.map(d => getAmounts(d).total);
+
+            if (indivHistoryChart) {
+                indivHistoryChart.setOption({
+                    tooltip: { trigger: 'axis', backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: '#e5e7eb', textStyle: { color: '#1f2937' } },
+                    grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+                    xAxis: { type: 'category', data: historyDates, axisLine: { lineStyle: { color: '#d1d5db' } } },
+                    yAxis: { type: 'value', splitLine: { lineStyle: { type: 'dashed', color: '#f3f4f6' } } },
+                    series: [{
+                        data: historyAmounts,
+                        type: 'line',
+                        smooth: true,
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 0, color: 'rgba(0, 104, 71, 0.4)' },
+                                { offset: 1, color: 'rgba(0, 104, 71, 0.0)' }
+                            ])
+                        },
+                        itemStyle: { color: '#006847' },
+                        lineStyle: {
+                            width: 3,
+                            shadowColor: 'rgba(0, 104, 71, 0.3)',
+                            shadowBlur: 10,
+                            shadowOffsetY: 5
+                        },
+                        symbol: 'circle',
+                        symbolSize: 8,
+                        showSymbol: false
+                    }]
+                });
+            }
+
+            // Chart 2: Contribution Breakdown
+            const sumSalary = currentFilteredData.reduce((s, d) => s + getAmounts(d).salary, 0);
+            const sumExtra = currentFilteredData.reduce((s, d) => s + getAmounts(d).extra, 0);
+            const sumGas = currentFilteredData.reduce((s, d) => s + getAmounts(d).gas, 0);
+
+            if (indivBreakdownChart) {
+                indivBreakdownChart.setOption({
+                    tooltip: { trigger: 'item', backgroundColor: 'rgba(255, 255, 255, 0.9)' },
+                    legend: { bottom: '0%', icon: 'circle' },
+                    series: [
+                        {
+                            name: 'Reference',
+                            type: 'pie',
+                            radius: ['50%', '70%'],
+                            itemStyle: {
+                                color: '#f3f4f6', // Placeholder ring
+                            },
+                            silent: true,
+                            data: [{ value: 1 }],
+                            animation: false,
+                            label: { show: false },
+                            z: 0
+                        },
+                        {
+                            name: 'Contribution',
+                            type: 'pie',
+                            radius: ['52%', '68%'], // Slightly smaller than background ring
+                            center: ['50%', '50%'],
+                            roseType: false, // Standard donut
+                            data: [
+                                {
+                                    value: sumSalary, name: 'Salary', itemStyle: {
+                                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#60a5fa' }, { offset: 1, color: '#2563eb' }]),
+                                        borderRadius: 5, shadowBlur: 5, shadowColor: '#93c5fd'
+                                    }
+                                },
+                                {
+                                    value: sumExtra, name: 'Extra', itemStyle: {
+                                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#34d399' }, { offset: 1, color: '#059669' }]),
+                                        borderRadius: 5, shadowBlur: 5, shadowColor: '#6ee7b7'
+                                    }
+                                },
+                                {
+                                    value: sumGas, name: 'Gas Refill', itemStyle: {
+                                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#fbbf24' }, { offset: 1, color: '#d97706' }]),
+                                        borderRadius: 5, shadowBlur: 5, shadowColor: '#fcd34d'
+                                    }
+                                }
+                            ].filter(x => x.value > 0),
+                            emphasis: { scale: true, scaleSize: 10, itemStyle: { shadowBlur: 20, shadowColor: 'rgba(0,0,0,0.2)' } },
+                            label: { show: false },
+                            itemStyle: {
+                                borderRadius: 8,
+                                borderColor: '#fff',
+                                borderWidth: 2
+                            }
+                        }
+                    ]
+                });
+            }
+        }
+
+        function updateDashboardNew() {
+            const dashboardContainer = document.getElementById('dashboard-container');
+            const hiddenState = document.getElementById('dashboard-hidden-state');
+            const householdFilter = document.getElementById('household-filter');
+            const selectedHousehold = householdFilter.value;
+
+            // 1. Force Dashboard Container Visibility
+            // Removing 'hidden' class to ensure it renders. 
+            // We use 'flex' to ensure flexbox layout is active.
+            if (dashboardContainer) {
+                dashboardContainer.classList.remove('hidden');
+                // Use a clean class string that forces display:flex
+                dashboardContainer.className = "flex w-full md:w-1/2 lg:w-[45%] bg-slate-50 flex-col scrollbar-default relative shrink-0 border-b md:border-b-0 md:border-r border-gray-200";
+            }
+
+            // Hide the old "hidden state" warning if it exists (legacy cleanup)
+            if (hiddenState) {
+                hiddenState.classList.add('hidden');
+                hiddenState.classList.remove('flex');
+            }
+
+            const globalView = document.getElementById('dashboard-global-view');
+            const individualView = document.getElementById('dashboard-individual-view');
+
+            // Initialize all charts
+            try {
+                initCharts();
+            } catch (e) { console.error("Chart init failed", e); }
+
+            // 2. State Switch Logic
+            if (selectedHousehold && selectedHousehold !== "") {
+                // --- INDIVIDUAL (MICRO) MODE ---
+                if (globalView) globalView.classList.add('hidden');
+                if (individualView) individualView.classList.remove('hidden');
+
+                try {
+                    updateIndividualDashboard(selectedHousehold);
+                } catch (e) {
+                    console.error("Individual Dashboard Render Error:", e);
+                }
+            } else {
+                // --- GLOBAL (MACRO) MODE ---
+                if (individualView) individualView.classList.add('hidden');
+                if (globalView) globalView.classList.remove('hidden');
+
+                try {
+                    updateGlobalDashboard();
+                } catch (e) {
+                    console.error("Global Dashboard Render Error:", e);
+                }
+            }
+        }
+
+        // Button Listener for Reset
+        document.getElementById('reset-household-filter-btn')?.addEventListener('click', () => {
+            const hf = document.getElementById('household-filter');
+            if (hf) {
+                hf.value = "";
+                filterAndDisplayData(); // Triggers updateDashboard
+            }
+        });
+
+        // Get payment mode class
+        function getPaymentModeClass(mode) {
+            switch (mode?.toLowerCase()) {
+                case 'online':
+                    return 'bg-blue-100 text-blue-700';
+                case 'cash':
+                    return 'bg-green-100 text-green-700';
+                case 'none':
+                    return 'bg-gray-100 text-gray-600';
+                default:
+                    return 'bg-gray-100 text-gray-600';
+            }
+        }
+
+        // --- PDF Generation ---
+        // Stamp image as base64 (will be loaded dynamically)
+        let stampImageBase64 = null;
+        let nastaliqFontBase64 = null;
+
+        // Load stamp image
+        function loadStampImage() {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = function () {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    stampImageBase64 = canvas.toDataURL('image/png');
+                    resolve(stampImageBase64);
+                };
+                img.onerror = function () {
+                    console.warn('Could not load stamp image');
+                    resolve(null);
+                };
+                img.src = 'assets/officialstamp.png';
+            });
+        }
+
+        // Load Nastaliq font for embedding in PDF
+        async function loadNastaliqFont() {
+            try {
+                const response = await fetch('assets/NotoNastaliqUrdu-Bold.ttf');
+                const arrayBuffer = await response.arrayBuffer();
+                const uint8Array = new Uint8Array(arrayBuffer);
+                let binary = '';
+                for (let i = 0; i < uint8Array.length; i++) {
+                    binary += String.fromCharCode(uint8Array[i]);
+                }
+                nastaliqFontBase64 = btoa(binary);
+                console.log('Nastaliq font loaded successfully');
+            } catch (error) {
+                console.warn('Could not load Nastaliq font:', error);
+                nastaliqFontBase64 = null;
+            }
+        }
+
+        // Pre-load the stamp image and Nastaliq font
+        loadStampImage();
+        loadNastaliqFont();
+
+        async function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
+
+            // ===== URDU HEADER (Canvas-based for guaranteed rendering) =====
+            try {
+                // Wait for fonts to be ready
+                await document.fonts.ready;
+
+                // Create high-resolution canvas for crisp Urdu text
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const scale = 3; // Higher resolution for clarity
+                canvas.width = 600 * scale;
+                canvas.height = 50 * scale;
+
+                // Fill with white background for visibility
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Draw Urdu text with Nastaliq font
+                ctx.scale(scale, scale);
+                ctx.font = 'bold 32px "Noto Nastaliq Urdu", "Traditional Arabic", serif';
+                ctx.fillStyle = '#000000';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('مسجد نور کمیٹی بٹھار', 300, 28);
+
+                // Convert to image and add to PDF
+                const urduImg = canvas.toDataURL('image/png');
+                const urduImgWidth = 80;
+                const urduImgHeight = 12;
+                doc.addImage(urduImg, 'PNG', (pageWidth - urduImgWidth) / 2, 8, urduImgWidth, urduImgHeight);
+            } catch (e) {
+                console.warn('Urdu header rendering failed:', e);
+                // Ultimate fallback: Just show English
+            }
+
+            // English title below Urdu
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(0, 0, 0);
+            doc.text('Masjid Noor Committee Bathar', pageWidth / 2, 27, { align: 'center' });
+
+            // Horizontal line below title
+            doc.setDrawColor(0, 104, 71);
+            doc.setLineWidth(0.5);
+            doc.line(15, 32, pageWidth - 15, 32);
+
+            // ===== VISIT WEBSITE SECTION =====
+            // Green bordered box for website info
+            doc.setDrawColor(0, 104, 71);
+            doc.setLineWidth(0.3);
+            doc.roundedRect(15, 36, pageWidth - 30, 12, 1, 1, 'S');
+
+            // Website heading - uppercase and clickable link
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(0, 104, 71);
+            const websiteText = 'VISIT MASJIDNOOR.TECH TO SEE THE DATA';
+            const textWidth = doc.getTextWidth(websiteText);
+            const textX = (pageWidth - textWidth) / 2;
+            doc.textWithLink(websiteText, textX, 44, { url: 'https://masjidnoor.tech' });
+
+            // ===== MONTH & HOUSEHOLD INFO =====
+            const selectedMonth = document.getElementById('month-filter').value;
+            const selectedHousehold = document.getElementById('household-filter');
+            const householdText = selectedHousehold.value ? selectedHousehold.options[selectedHousehold.selectedIndex].text : 'All Households';
+            const monthText = selectedMonth || 'All Months';
+
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Month: ${monthText}  |  Household: ${householdText}`, 15, 55);
+
+            // ===== DATA TABLE =====
+            // Check which optional columns have data (robust checks with nested supplies)
+            const hasRice = currentFilteredData.some(item => {
+                const supplies = item.supplies || {};
+                return supplies.rice === true || supplies.rice === 'true' || !!supplies.rice;
+            });
+            const hasGas = currentFilteredData.some(item => {
+                const supplies = item.supplies || {};
+                // Check if gas boolean is true
+                return supplies.gas === true || supplies.gas === 'true' || !!supplies.gas;
+            });
+            const hasExtra = currentFilteredData.some(item => (parseFloat(item.extraAmount || item.ExtraAmount) || 0) > 0);
+            const hasReason = currentFilteredData.some(item => (item.varianceReason || '').toString().trim() !== '');
+
+            // Build dynamic header
+            const headers = ['#', 'Month', 'Name', 'Date', 'Mode'];
+            if (hasRice) headers.push('Rice');
+            if (hasGas) headers.push('Gas Amount'); // Updated header text
+            if (hasExtra) headers.push('Extra');
+            if (hasReason) headers.push('Reason');
+            headers.push('Amount');
+
+            // Prepare table data with dynamic columns
+            const tableData = currentFilteredData.map((item, index) => {
+                const amount = parseFloat(item.salaryAmount) || 0;
+                const extraAmount = parseFloat(item.extraAmount || item.ExtraAmount) || 0;
+
+                // Nested Supplies Access
+                const supplies = item.supplies || {};
+                const isRice = supplies.rice === true || supplies.rice === 'true' || !!supplies.rice;
+                const hasGasEntry = supplies.gas === true || supplies.gas === 'true' || !!supplies.gas;
+                // Robust gasAmount check (nested or top-level, varied casing)
+                const rawGas = supplies.gasAmount || supplies.GasAmount || item.gasAmount || item.GasAmount;
+                const gasAmount = hasGasEntry ? (parseFloat(rawGas) || 0) : 0;
+
+                // Total calculation excludes rice
+                const totalItemAmount = amount + extraAmount + gasAmount;
+
+                // Format date as YYYY-MM-DD
+                let dateStr = '-';
+                if (item.paymentDate) {
+                    try {
+                        const d = new Date(item.paymentDate);
+                        dateStr = d.toISOString().slice(0, 10);
+                    } catch {
+                        dateStr = item.paymentDate;
+                    }
+                }
+
+                // Build row with dynamic columns
+                const row = [
+                    index + 1,
+                    item.normalizedMonth || '-',
+                    (item.householdName || 'Unknown').toUpperCase(),
+                    dateStr,
+                    item.paymentMode || '-'
+                ];
+
+                if (hasRice) row.push(isRice ? 'Yes' : 'No');
+                if (hasGas) row.push(gasAmount > 0 ? 'Rs ' + gasAmount : '-');
+                if (hasExtra) row.push(extraAmount > 0 ? 'Rs ' + extraAmount : '-');
+                if (hasReason) row.push(item.varianceReason || '-');
+                row.push('Rs ' + totalItemAmount.toLocaleString('en-IN'));
+
+                return row;
+            });
+
+            // Build column styles dynamically
+            const columnStyles = {
+                0: { halign: 'center', cellWidth: 8 },
+                1: { cellWidth: 22 },
+                2: { cellWidth: 'auto' },
+                3: { cellWidth: 22 },
+                4: { cellWidth: 16 }
+            };
+            let colIndex = 5;
+            if (hasRice) { columnStyles[colIndex++] = { halign: 'right', cellWidth: 14 }; }
+            if (hasGas) { columnStyles[colIndex++] = { halign: 'right', cellWidth: 14 }; }
+            if (hasExtra) { columnStyles[colIndex++] = { halign: 'right', cellWidth: 14 }; }
+            if (hasReason) { columnStyles[colIndex++] = { cellWidth: 25 }; }
+            columnStyles[colIndex] = { halign: 'right', cellWidth: 22 }; // Amount
+
+            // Generate table with dynamic styling and pagination support
+            doc.autoTable({
+                head: [headers],
+                body: tableData,
+                startY: 59,
+                theme: 'grid',
+                headStyles: {
+                    fillColor: [248, 250, 248],
+                    textColor: [30, 30, 30],
+                    fontStyle: 'bold',
+                    fontSize: 7,
+                    halign: 'left',
+                    cellPadding: 2,
+                    lineColor: [180, 180, 180],
+                    lineWidth: 0.2
+                },
+                bodyStyles: {
+                    fontSize: 7,
+                    cellPadding: 2,
+                    textColor: [40, 40, 40],
+                    lineColor: [200, 200, 200],
+                    lineWidth: 0.15
+                },
+                alternateRowStyles: {
+                    fillColor: [255, 255, 255]
+                },
+                columnStyles: columnStyles,
+                // Ensure bottom margin is reserved for footer to prevent overlap
+                margin: { left: 10, right: 10, bottom: 45 },
+                tableWidth: pageWidth - 20,
+                tableLineColor: [180, 180, 180],
+                tableLineWidth: 0.15,
+                styles: {
+                    overflow: 'linebreak',
+                    valign: 'middle'
+                }
+            });
+
+            // ===== FOOTER SECTION (Anchored to Bottom of Final Page) =====
+            // If table ends very close to bottom margin, autoTable usually creates new page.
+            // But we specifically want to anchor footer at the bottom.
+            const footerBottomAnchor = pageHeight - 15;
+
+            // Committee name
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(0, 0, 0);
+            doc.text('Masjid Noor Bathar', 15, footerBottomAnchor - 12);
+
+            // President and Cashier info
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(0, 104, 71);
+            doc.text('President:', 15, footerBottomAnchor - 6);
+            doc.setTextColor(0, 0, 0);
+            doc.text(' Mr. Ghulam Nabi Tantray', 15 + doc.getTextWidth('President:'), footerBottomAnchor - 6);
+
+            doc.setTextColor(0, 104, 71);
+            doc.text('Cashier:', 15, footerBottomAnchor);
+            doc.setTextColor(0, 0, 0);
+            doc.text(' Mr. Mohammad Aslam Tantray', 15 + doc.getTextWidth('Cashier:'), footerBottomAnchor);
+
+            // ===== STAMP IMAGE (bottom right) =====
+            if (stampImageBase64) {
+                const stampSize = 32;
+                const stampX = pageWidth - 15 - stampSize;
+                // Align stamp bottom roughly with text bottom
+                const stampY = footerBottomAnchor - stampSize + 5;
+                try {
+                    doc.addImage(stampImageBase64, 'PNG', stampX, stampY, stampSize, stampSize);
+                } catch (e) {
+                    console.warn('Could not add stamp image to PDF:', e);
+                }
+            }
+
+            // ===== GENERATE PDF AND SHARE =====
+            // Dynamic filename: MNB[MONTH][HOUSEHOLD][YEAR].pdf
+            const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+            let monthAbbr = 'ALL';
+            let yearStr = new Date().getFullYear().toString();
+            if (selectedMonth) {
+                const parts = selectedMonth.split(' ');
+                if (parts.length >= 2) {
+                    const monthName = parts[0].toUpperCase().slice(0, 3);
+                    monthAbbr = monthName;
+                    yearStr = parts[1] || yearStr;
+                }
+            }
+            const householdForFilename = selectedHousehold
+                ? householdText.toUpperCase().replace(/[^A-Z0-9]/g, '')
+                : 'ALLHOUSEHOLDS';
+            const filename = `MNB${monthAbbr}${householdForFilename}${yearStr}.pdf`;
+
+            // Generate PDF as blob for sharing
+            const pdfBlob = doc.output('blob');
+            const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+            // Try to use Web Share API (works on mobile and some desktop browsers)
+            if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+                try {
+                    await navigator.share({
+                        files: [pdfFile],
+                        title: 'Masjid Noor Report',
+                        text: `Masjid Noor Bathar - ${monthText} Report`
+                    });
+                    console.log('PDF shared successfully');
+                } catch (err) {
+                    if (err.name !== 'AbortError') {
+                        // User didn't cancel, so fallback to download
+                        console.log('Share failed, downloading instead:', err);
+                        doc.save(filename);
+                    }
+                }
+            } else {
+                // Web Share API not supported, fallback to direct download
+                doc.save(filename);
+            }
+        }
+
+        // --- Event Listeners ---
+        document.getElementById('month-filter').addEventListener('change', filterAndDisplayData);
+        document.getElementById('household-filter').addEventListener('change', filterAndDisplayData);
+        document.getElementById('share-pdf-btn').addEventListener('click', generatePDF);
+
+        // --- Initialize ---
+        async function init() {
+            await Promise.all([loadHouseholds(), loadSalaryData()]);
+            // Ensure dashboard has complete data (households + salary)
+            filterAndDisplayData();
+        }
+
+        init();
+
+        // Login Logic
+        const loginForm = document.querySelector('.login-form');
+        const loginError = document.getElementById('login-error');
+
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                loginError.style.display = 'none';
+                loginError.textContent = 'Signing in...';
+                loginError.classList.remove('text-red-500');
+                loginError.classList.add('text-gray-500', 'block');
+                loginError.classList.remove('hidden');
+
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                try {
+                    // Set persistence to LOCAL to ensure user stays logged in across pages
+                    await setPersistence(auth, browserLocalPersistence);
+
+                    await signInWithEmailAndPassword(auth, email, password);
+                    // Redirect on success
+                    console.log("Login successful, redirecting...");
+                    window.location.href = 'dashboard';
+                } catch (error) {
+                    console.error("Login Error:", error);
+                    loginError.classList.remove('text-gray-500');
+                    loginError.classList.add('text-red-500');
+                    // Show specific error message
+                    let errorMessage = "Invalid email or password.";
+                    if (error.code === 'auth/network-request-failed') {
+                        errorMessage = "Network error. Please check your internet connection.";
+                    } else if (error.code === 'auth/too-many-requests') {
+                        errorMessage = "Too many failed attempts. Please try again later.";
+                    } else if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                        errorMessage = "Incorrect email or password.";
+                    } else {
+                        // Fallback for other errors
+                        errorMessage = "Incorrect email or password.";
+                    }
+                    loginError.textContent = errorMessage;
+                    loginError.classList.remove('hidden');
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

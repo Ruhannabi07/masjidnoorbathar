@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Masjid Noor Bathar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-green': '#006847',
+                        'hover-green': '#005238',
+                        'bg-gray': '#f3f4f6',
+                        'text-dark': '#111827',
+                        'text-gray': '#6b7280',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Hide body content until auth is checked to avoid flash */
+        body {
+            /* visibility: hidden; Removed for debugging */
+        }
+
+        /* Toggle Switch Custom Styling if needed beyond Tailwind forms plugin */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #006847;
+        }
+
+        .toggle-checkbox:checked+.toggle-label {
+            background-color: #006847;
+        }
+    </style>
+    <link rel="stylesheet" href="dashboard.css">
+    <script>
+        // Critical Failsafe: Force visibility if JS hangs or errors
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (getComputedStyle(document.body).visibility === 'hidden') {
+                    document.body.style.visibility = 'visible';
+                    console.warn("Failsafe triggered: Forced visibility.");
+                }
+            }, 3000);
+        });
+
+        // Global Error Handler
+        window.addEventListener('error', (e) => {
+            document.body.style.visibility = 'visible';
+            // Alert user to non-trivial errors
+            if (e.message && !e.message.includes('ResizeObserver')) {
+                console.error("Global Error:", e);
+                alert("Dashboard Error: " + e.message + "\nCheck console for details.");
+            }
+        });
+    </script>
+</head>
+
+<body class="bg-gray-100 font-sans text-gray-900">
+
+    <div class="flex h-screen overflow-hidden">
+
+        <!-- Mobile Sidebar Overlay -->
+        <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-20 hidden lg:hidden"></div>
+
+        <!-- Sidebar -->
+        <aside id="sidebar"
+            class="sidebar bg-white w-64 border-r border-gray-200 flex flex-col fixed inset-y-0 left-0 transform -translate-x-full lg:relative lg:translate-x-0 transition-transform duration-200 ease-in-out z-30">
+            <div class="p-6 flex items-center gap-3 mb-6">
+                <div class="w-8 h-8 bg-primary-green text-white rounded-lg flex items-center justify-center">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 21H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M5 21V10L12 5L19 10V21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <circle cx="12" cy="14" r="2" fill="currentColor" />
+                    </svg>
+                </div>
+                <span class="font-extrabold text-lg tracking-tight">Masjid Noor Admin</span>
+                <!-- Close Button Mobile -->
+                <button id="close-sidebar" class="lg:hidden ml-auto text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+                <div class="px-2 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">MAIN MENU</div>
+
+                <a href="#"
+                    class="menu-item group flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-primary-green bg-green-50"
+                    data-target="imam-salary-view">
+                    <svg class="w-5 h-5 text-primary-green" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                        <line x1="2" y1="10" x2="22" y2="10"></line>
+                    </svg>
+                    Imam Salary
+                </a>
+
+                <a href="#"
+                    class="menu-item group flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                    data-target="masjid-projects-view">
+                    <svg class="w-5 h-5 text-gray-400 group-hover:text-gray-500" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    Masjid Projects
+                </a>
+
+
+
+                <a href="#"
+                    class="menu-item group flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                    data-target="prayer-timing-view">
+                    <svg class="w-5 h-5 text-gray-400 group-hover:text-gray-500" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    Prayer Timing
+                </a>
+            </nav>
+
+            <div class="p-4 border-t border-gray-200">
+                <div class="user-profile flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                    title="Click to Logout">
+                    <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="text-gray-500">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor"
+                                stroke-width="2" />
+                            <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" />
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900 user-name">Admin User</p>
+                        <p class="text-xs text-gray-500 user-email">admin@budget.com</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content flex-1 flex flex-col h-full overflow-hidden relative w-full">
+
+            <!-- Mobile Header -->
+            <div class="lg:hidden bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-primary-green text-white rounded-lg flex items-center justify-center">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 21H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <path d="M5 21V10L12 5L19 10V21" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            <circle cx="12" cy="14" r="2" fill="currentColor" />
+                        </svg>
+                    </div>
+                    <span class="font-bold text-gray-900">Masjid Noor</span>
+                </div>
+                <button id="open-sidebar" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4 md:p-8 lg:p-10">
+
+                <!-- Imam Salary View -->
+                <div id="imam-salary-view" class="max-w-4xl mx-auto space-y-6">
+                    <header class="mb-8">
+                        <h1 class="text-2xl font-bold text-gray-900">Monthly Entry Submission</h1>
+                        <p class="text-gray-500 mt-1">Record income and supply details for the current month.</p>
+                    </header>
+
+                    <!-- Administrative Provisioning Section -->
+                    <div class="form-card bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8">
+                        <div class="p-6 flex flex-col md:flex-row items-end gap-4">
+                            <div class="flex-grow w-full">
+                                <label
+                                    class="block text-sm font-bold text-primary-green mb-2 uppercase tracking-wider">Add
+                                    New Household</label>
+                                <input type="text" id="new-household-name"
+                                    class="block w-full rounded-lg border-gray-300 px-4 py-2.5 focus:border-primary-green focus:ring-primary-green sm:text-sm outline-none border"
+                                    placeholder="Enter full household name...">
+                            </div>
+                            <button id="btn-add-household" class="btn-submit w-full md:w-auto h-[46px]">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                Add Household
+                            </button>
+                            <!-- Delete Household Trigger -->
+                            <button id="btn-open-delete-modal"
+                                class="md:ml-3 flex items-center justify-center gap-2 px-6 py-2.5 h-[46px] w-full md:w-auto text-sm font-bold text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all shadow-sm">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                                    </path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                Manage Households
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-card bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <!-- General Info -->
+                        <div class="p-6 md:p-8 space-y-6">
+                            <div class="flex items-center gap-2 mb-4">
+                                <svg class="w-5 h-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                <h3 class="text-xs font-bold text-blue-600 uppercase tracking-wider">GENERAL INFO</h3>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Select Month and
+                                        Year</label>
+                                    <div class="relative">
+                                        <select id="month-select"
+                                            class="block w-full pl-3 pr-10 py-2.5 text-base border-gray-300 sm:text-sm rounded-lg border focus:ring-primary-green focus:border-primary-green outline-none bg-white">
+                                            <!-- Options populated by JS -->
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Household Name</label>
+                                    <select id="household-select"
+                                        class="block w-full pl-3 pr-10 py-2.5 text-base border-gray-300 sm:text-sm rounded-lg border focus:ring-primary-green focus:border-primary-green outline-none bg-white">
+                                        <option value="">Loading...</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="border-gray-100">
+
+                        <!-- Income Details -->
+                        <div class="p-6 md:p-8 space-y-6">
+                            <div class="flex items-center gap-2 mb-4">
+                                <svg class="w-5 h-5 text-primary-green" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                                    <line x1="2" y1="10" x2="22" y2="10"></line>
+                                </svg>
+                                <h3 class="text-xs font-bold text-primary-green uppercase tracking-wider">INCOME DETAILS
+                                </h3>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Salary Amount</label>
+                                    <div class="relative rounded-md shadow-sm">
+                                        <div
+                                            class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                            <span class="text-gray-500 sm:text-sm">₹</span>
+                                        </div>
+                                        <input type="number" id="salary-amount" min="0" step="any"
+                                            class="block w-full rounded-lg border-gray-300 pl-7 py-2.5 focus:border-primary-green focus:ring-primary-green sm:text-sm outline-none border"
+                                            placeholder="0.00">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Extra Amount</label>
+                                    <div class="relative rounded-md shadow-sm">
+                                        <div
+                                            class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                            <span class="text-gray-500 sm:text-sm">₹</span>
+                                        </div>
+                                        <input type="number" id="extra-amount" min="0" step="any"
+                                            class="block w-full rounded-lg border-gray-300 pl-7 py-2.5 focus:border-primary-green focus:ring-primary-green sm:text-sm outline-none border"
+                                            placeholder="0.00">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Variance Selection -->
+                            <div id="variance-section" class="hidden animate-[fadeIn_0.3s_ease-out]">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Reason for amount variance /
+                                    extra allocation</label>
+                                <select id="variance-reason"
+                                    class="block w-full pl-3 pr-10 py-2.5 text-base border-gray-300 sm:text-sm rounded-lg border focus:ring-primary-green focus:border-primary-green outline-none bg-white mb-4">
+                                    <option value="">Select Reason...</option>
+                                    <option value="goods">Imam took goods worth ₹250, adjusted against salary.</option>
+                                    <option value="borrowed">The imam borrowed ₹250, which was adjusted against his
+                                        salary.</option>
+                                    <option value="no_money">Person said, 'I don’t have the money this month.</option>
+                                    <option value="arrears">₹250 extra, last month's salary was not given, now paid.
+                                    </option>
+                                    <option value="recharge">Imam recharged for ₹300, and it’s been adjusted in the
+                                        salary.</option>
+                                    <option value="other">Other</option>
+                                </select>
+
+                                <div id="other-reason-container" class="hidden">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Enter Manual
+                                        Reason</label>
+                                    <textarea id="other-reason" rows="2"
+                                        class="block w-full rounded-lg border-gray-300 px-4 py-2.5 focus:border-primary-green focus:ring-primary-green sm:text-sm outline-none border"
+                                        placeholder="Please specify the reason..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="border-gray-100">
+
+                        <!-- Transaction Info -->
+                        <div class="p-6 md:p-8 space-y-6">
+                            <div class="flex items-center gap-2 mb-4">
+                                <svg class="w-5 h-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                                <h3 class="text-xs font-bold text-blue-600 uppercase tracking-wider">TRANSACTION INFO
+                                </h3>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Payment Mode</label>
+                                    <div class="relative">
+                                        <div
+                                            class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                            <svg class="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2">
+                                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                                            </svg>
+                                        </div>
+                                        <select id="payment-mode"
+                                            class="block w-full rounded-lg border-gray-300 pl-10 py-2.5 focus:border-primary-green focus:ring-primary-green sm:text-sm outline-none border bg-white">
+                                            <option>Select Mode</option>
+                                            <option>Online</option>
+                                            <option>Cash</option>
+                                            <option>None</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Payment Date</label>
+                                    <div class="relative">
+                                        <div
+                                            class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                            <svg class="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2">
+                                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                                            </svg>
+                                        </div>
+                                        <input type="date" id="payment-date"
+                                            class="block w-full rounded-lg border-gray-300 pl-10 py-2.5 focus:border-primary-green focus:ring-primary-green sm:text-sm outline-none border text-gray-500">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="border-gray-100">
+
+                        <!-- Supplies -->
+                        <div class="p-6 md:p-8 space-y-6">
+                            <div class="flex items-center gap-2 mb-4">
+                                <svg class="w-5 h-5 text-primary-green" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path d="M21 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v3"></path>
+                                    <path d="M21 16v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3"></path>
+                                    <path d="M4 12h16"></path>
+                                </svg>
+                                <h3 class="text-xs font-bold text-primary-green uppercase tracking-wider">SUPPLIES</h3>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div
+                                    class="bg-gray-50 p-4 rounded-lg flex items-center justify-between border border-gray-200">
+                                    <span class="text-sm font-medium text-gray-700">Rice Collected</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="rice-check" value="" class="sr-only peer">
+                                        <div
+                                            class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-green">
+                                        </div>
+                                    </label>
+                                </div>
+                                <div
+                                    class="bg-gray-50 p-4 rounded-lg flex items-center justify-between border border-gray-200">
+                                    <span class="text-sm font-medium text-gray-700">Gas Refill</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="gas-check" value="" class="sr-only peer">
+                                        <div
+                                            class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-green">
+                                        </div>
+                                    </label>
+                                </div>
+                                <div id="gas-amount-container" class="hidden col-span-1 md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Gas Refill
+                                        Amount</label>
+                                    <div class="relative rounded-md shadow-sm">
+                                        <div
+                                            class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                            <span class="text-gray-500 sm:text-sm">₹</span>
+                                        </div>
+                                        <input type="number" id="gas-amount" min="0" step="any"
+                                            class="block w-full rounded-lg border-gray-300 pl-7 py-2.5 focus:border-primary-green focus:ring-primary-green sm:text-sm outline-none border"
+                                            placeholder="Enter amount">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div
+                            class="bg-gray-50 px-6 py-4 flex flex-col md:flex-row justify-end gap-3 border-t border-gray-200">
+                            <button type="submit" id="btn-submit-salary"
+                                class="btn-submit w-full md:w-auto flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-primary-green hover:bg-hover-green focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-green transition-colors gap-2">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                <span>Submit Salary</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recent Entries List -->
+                    <div id="test-data-section"
+                        class="form-card bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mt-8 hidden">
+                        <div
+                            class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 flex-wrap gap-4">
+                            <h3 class="text-lg font-bold text-gray-900">Recent Entries</h3>
+                            <div class="relative">
+                                <select id="history-filter"
+                                    class="block w-full pl-3 pr-10 py-1.5 text-sm border-gray-300 rounded-md focus:ring-primary-green focus:border-primary-green outline-none bg-white">
+                                    <!-- Options populated by JS -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col"
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Date</th>
+                                        <th scope="col"
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Name</th>
+                                        <th scope="col"
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Amount</th>
+                                        <th scope="col"
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="test-data-list" class="bg-white divide-y divide-gray-200">
+                                    <!-- Dynamic Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="no-data-msg" class="p-8 text-center text-gray-500 hidden">
+                            No entries found.
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const salaryInput = document.getElementById('salary-amount');
+                        const extraInput = document.getElementById('extra-amount');
+                        const varianceSection = document.getElementById('variance-section');
+                        const varianceReason = document.getElementById('variance-reason');
+                        const otherReasonContainer = document.getElementById('other-reason-container');
+
+                        function checkVariance() {
+                            const salary = parseFloat(salaryInput.value) || 0;
+                            const extra = parseFloat(extraInput.value) || 0;
+
+                            // Check Logic: Salary != 250 OR Extra > 0
+                            // Note: 250 is the expected salary amount.
+                            const hasVariance = (salary !== 250) || (extra > 0);
+
+                            if (hasVariance) {
+                                varianceSection.classList.remove('hidden');
+                            } else {
+                                varianceSection.classList.add('hidden');
+                                // Reset selection if hidden to avoid submitting hidden data
+                                varianceReason.value = "";
+                                otherReasonContainer.classList.add('hidden');
+                            }
+                        }
+
+                        function checkReason() {
+                            if (varianceReason.value === 'other') {
+                                otherReasonContainer.classList.remove('hidden');
+                            } else {
+                                otherReasonContainer.classList.add('hidden');
+                            }
+                        }
+
+                        if (salaryInput) {
+                            salaryInput.addEventListener('input', checkVariance);
+                            // Set default value logic? If needed, but placeholder is 0.00
+                        }
+                        if (extraInput) extraInput.addEventListener('input', checkVariance);
+                        if (varianceReason) varianceReason.addEventListener('change', checkReason);
+
+                        // Gas Toggle Logic
+                        const gasCheck = document.getElementById('gas-check');
+                        const gasAmountContainer = document.getElementById('gas-amount-container');
+                        const gasAmountInput = document.getElementById('gas-amount');
+
+                        if (gasCheck && gasAmountContainer) {
+                            gasCheck.addEventListener('change', () => {
+                                if (gasCheck.checked) {
+                                    gasAmountContainer.classList.remove('hidden');
+                                } else {
+                                    gasAmountContainer.classList.add('hidden');
+                                    if (gasAmountInput) gasAmountInput.value = '';
+                                }
+                            });
+                        }
+                    });
+                </script>
+
+                <!-- Masjid Projects View -->
+                <div id="masjid-projects-view" class="hidden max-w-4xl mx-auto space-y-6">
+                    <header class="mb-8">
+                        <h1 class="text-2xl font-bold text-gray-900">Masjid Projects</h1>
+                        <p class="text-gray-500 mt-1">Manage and track ongoing masjid projects.</p>
+                    </header>
+                    <div
+                        class="bg-white rounded-xl shadow-sm border border-gray-200 h-96 flex flex-col items-center justify-center text-gray-400">
+                        <svg class="w-16 h-16 mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                            </path>
+                        </svg>
+                        <p class="font-medium">No projects content yet.</p>
+                    </div>
+                </div>
+
+
+                <!-- Prayer Timing View -->
+                <div id="prayer-timing-view" class="hidden max-w-4xl mx-auto space-y-6">
+                    <header class="mb-8">
+                        <h1 class="text-2xl font-bold text-gray-900">Prayer Timings</h1>
+                        <p class="text-gray-500 mt-1">Update the daily prayer times.</p>
+                    </header>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="p-6 md:p-8 space-y-6">
+                            <div class="flex items-center gap-2 mb-4">
+                                <svg class="w-5 h-5 text-primary-green" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <h3 class="text-xs font-bold text-primary-green uppercase tracking-wider">DAILY PRAYERS
+                                </h3>
+                            </div>
+
+                            <form id="prayer-timing-form" class="space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Fajr -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Fajr</label>
+                                        <div class="relative">
+                                            <input type="time" id="fajr-time" name="fajr"
+                                                class="block w-full rounded-lg border-gray-300 px-4 py-2.5 focus:border-primary-green focus:ring-primary-green sm:text-sm outline-none border">
+                                        </div>
+                                    </div>
+
+                                    <!-- Dhuhr -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Dhuhr</label>
+                                        <div class="relative">
+                                            <input type="time" id="dhuhr-time" name="dhuhr"
+                                                class="block w-full rounded-lg border-gray-300 px-4 py-2.5 focus:border-primary-green focus:ring-primary-green sm:text-sm outline-none border">
+                                        </div>
+                                    </div>
+
+                                    <!-- Asr -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Asr</label>
+                                        <div class="relative">
+                                            <input type="time" id="asr-time" name="asr"
+                                                class="block w-full rounded-lg border-gray-300 px-4 py-2.5 focus:border-primary-green focus:ring-primary-green sm:text-sm outline-none border">
+                                        </div>
+                                    </div>
+
+                                    <!-- Maghrib -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Maghrib</label>
+                                        <div class="relative">
+                                            <input type="time" id="maghrib-time" name="maghrib"
+                                                class="block w-full rounded-lg border-gray-300 px-4 py-2.5 focus:border-primary-green focus:ring-primary-green sm:text-sm outline-none border">
+                                        </div>
+                                    </div>
+
+                                    <!-- Isha -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Isha</label>
+                                        <div class="relative">
+                                            <input type="time" id="isha-time" name="isha"
+                                                class="block w-full rounded-lg border-gray-300 px-4 py-2.5 focus:border-primary-green focus:ring-primary-green sm:text-sm outline-none border">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="pt-4 border-t border-gray-100 flex justify-end">
+                                    <button type="submit"
+                                        class="w-full md:w-auto flex justify-center items-center px-6 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-primary-green hover:bg-hover-green focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-green transition-colors gap-2">
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2">
+                                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z">
+                                            </path>
+                                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                            <polyline points="7 3 7 8 15 8"></polyline>
+                                        </svg>
+                                        Save Timings
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Delete Household Modal -->
+        <div id="delete-household-modal"
+            class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm transition-opacity duration-300">
+            <div
+                class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[80vh] flex flex-col overflow-hidden transform transition-all scale-100">
+                <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                    <h3 class="text-lg font-bold text-gray-900">Manage Households</h3>
+                    <button id="close-delete-modal" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="p-6 overflow-y-auto" id="household-list-container">
+                    <!-- Dynamic List -->
+                    <div class="text-center text-gray-500 py-4">Loading...</div>
+                </div>
+
+                <div class="p-4 border-t border-gray-100 bg-gray-50 text-right">
+                    <button id="btn-close-modal-footer"
+                        class="text-sm text-gray-600 hover:text-gray-900 font-medium">Close</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mobile Sidebar Toggle
+            const openSidebarBtn = document.getElementById('open-sidebar');
+            const closeSidebarBtn = document.getElementById('close-sidebar');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+            function toggleSidebar() {
+                const isClosed = sidebar.classList.contains('-translate-x-full');
+                if (isClosed) {
+                    sidebar.classList.remove('-translate-x-full');
+                    sidebarOverlay.classList.remove('hidden');
+                } else {
+                    sidebar.classList.add('-translate-x-full');
+                    sidebarOverlay.classList.add('hidden');
+                }
+            }
+
+            if (openSidebarBtn) openSidebarBtn.addEventListener('click', toggleSidebar);
+            if (closeSidebarBtn) closeSidebarBtn.addEventListener('click', toggleSidebar);
+            if (sidebarOverlay) sidebarOverlay.addEventListener('click', toggleSidebar);
+
+            // Menu Navigation
+            const menuItems = document.querySelectorAll('.menu-item');
+            const views = {
+                'imam-salary-view': document.getElementById('imam-salary-view'),
+                'masjid-projects-view': document.getElementById('masjid-projects-view'),
+                'prayer-timing-view': document.getElementById('prayer-timing-view')
+            };
+
+            menuItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+
+                    // Update Menu Styles
+                    menuItems.forEach(i => {
+                        i.classList.remove('bg-green-50', 'text-primary-green');
+                        i.classList.add('text-gray-600', 'hover:bg-gray-50', 'hover:text-gray-900');
+                        // Update Icon color
+                        const icon = i.querySelector('svg');
+                        if (icon) icon.classList.replace('text-primary-green', 'text-gray-400');
+                    });
+
+                    // Set Active Style
+                    item.classList.remove('text-gray-600', 'hover:bg-gray-50', 'hover:text-gray-900');
+                    item.classList.add('bg-green-50', 'text-primary-green');
+                    const activeIcon = item.querySelector('svg');
+                    if (activeIcon) activeIcon.classList.replace('text-gray-400', 'text-primary-green');
+
+                    // View Switching
+                    Object.values(views).forEach(view => {
+                        if (view) view.classList.add('hidden');
+                    });
+
+                    const targetId = item.getAttribute('data-target');
+                    if (views[targetId]) {
+                        views[targetId].classList.remove('hidden');
+                    }
+
+                    // Close sidebar on mobile
+                    if (window.innerWidth < 1024) {
+                        sidebar.classList.add('-translate-x-full');
+                        sidebarOverlay.classList.add('hidden');
+                    }
+                });
+            });
+        });
+    </script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, limit, onSnapshot, doc, deleteDoc, updateDoc, where, getDocs, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-storage.js";
+
+        // Direct Firebase Configuration (Fixed for consistency)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBZXysolCVG8cTnTiC3m5Hk-eaDIVJlOpc",
+            authDomain: "masjidnoor-72827.firebaseapp.com",
+            projectId: "masjidnoor-72827",
+            storageBucket: "masjidnoor-72827.firebasestorage.app",
+            messagingSenderId: "900577400989",
+            appId: "1:900577400989:web:8f8b5353cf96509435dc74",
+            measurementId: "G-HMHH4B5TJK"
+        };
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            const auth = getAuth(app);
+            const storage = getStorage(app);
+
+            window.db = db;
+            window.auth = auth;
+            window.storage = storage;
+
+            initApp(db, auth, storage);
+        } catch (error) {
+            console.error("Firebase Initialization Error:", error);
+            alert("Critical Error: Failed to connect to database. " + error.message);
+        }
+
+        function initApp(db, auth, storage) {
+
+            // Auth Guard & Email Display
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    // User is signed in.
+                    document.body.style.visibility = 'visible';
+
+                    // Update email display
+                    const userEmailEl = document.querySelector('.user-email');
+                    if (userEmailEl) {
+                        userEmailEl.textContent = user.email;
+                    }
+                } else {
+                    // User is signed out. Redirect to login.
+                    window.location.href = 'home';
+                }
+            });
+
+            // Add logout functionality
+            const userProfile = document.querySelector('.user-profile');
+            if (userProfile) {
+                userProfile.addEventListener('click', () => {
+                    if (confirm('Are you sure you want to logout?')) {
+                        signOut(auth).then(() => {
+                            window.location.href = 'home';
+                        }).catch((error) => {
+                            console.error('Logout error', error);
+                        });
+                    }
+                });
+            }
+
+            // ==========================================
+            // Data Handling Logic
+            // ==========================================
+
+            const entriesCollection = collection(db, 'Salary Data');
+            let allHouseholds = []; // Cache households
+
+            // Helper: Get Previous Month String
+            function getPreviousMonthString() {
+                const date = new Date();
+                date.setMonth(date.getMonth() - 1);
+                const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                return `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+            }
+
+            // Helper: Get Month String from Date
+            function getMonthStringFromDate(date) {
+                const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                return `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+            }
+
+
+            // --- Household Management with Intelligent Filtering ---
+
+            // 1. Fetch All Households (Run Once)
+            async function fetchAllHouseholds() {
+                try {
+                    const querySnapshot = await getDocs(collection(db, "household names"));
+                    allHouseholds = [];
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        allHouseholds.push({
+                            id: doc.id,
+                            name: data.Name || data.name || doc.id
+                        });
+                    });
+                    // Sort alphabetically
+                    allHouseholds.sort((a, b) => a.name.localeCompare(b.name));
+                } catch (error) {
+                    console.error("Error loading households:", error);
+                }
+            }
+
+            // 2. Fetch Paid Households for Month (Algorithm Step B)
+            async function getPaidHouseholdsForMonth(monthYear) {
+                if (!monthYear) return new Set();
+                try {
+                    const paidIds = new Set();
+
+                    // Parse Target
+                    const parts = monthYear.split(' ');
+                    const targetMonth = parts[0];
+                    const targetYear = parseInt(parts[1]);
+
+                    // Query 1: Exact Match ("January 2026")
+                    const q1 = query(entriesCollection, where("month", "==", monthYear));
+                    const snap1 = await getDocs(q1);
+                    snap1.forEach(doc => {
+                        const data = doc.data();
+                        if (data.householdId) paidIds.add(data.householdId);
+                    });
+
+                    // Query 2: Legacy Match ("January")
+                    if (parts.length > 1) {
+                        const q2 = query(entriesCollection, where("month", "==", targetMonth));
+                        const snap2 = await getDocs(q2);
+                        snap2.forEach(doc => {
+                            const data = doc.data();
+                            let docYear = null;
+                            if (data.paymentDate) {
+                                docYear = new Date(data.paymentDate).getFullYear();
+                            } else if (data.timestamp && data.timestamp.toDate) {
+                                docYear = data.timestamp.toDate().getFullYear();
+                            } else {
+                                docYear = 2025;
+                            }
+
+                            if (docYear === targetYear) {
+                                if (data.householdId) paidIds.add(data.householdId);
+                            }
+                        });
+                    }
+
+                    return paidIds;
+                } catch (error) {
+                    console.error("Error fetching paid status:", error);
+                    return new Set();
+                }
+            }
+
+            // 3. Update Dropdown based on Selection
+            async function updateHouseholdDropdown(selectedMonth) {
+                const select = document.getElementById('household-select');
+
+                // If we haven't loaded households yet, do it
+                if (allHouseholds.length === 0) {
+                    await fetchAllHouseholds();
+                }
+
+                // Fetch paid households for this month
+                const paidIds = await getPaidHouseholdsForMonth(selectedMonth);
+
+                // Render Options
+                select.innerHTML = '<option value="">Select Household</option>';
+
+                let count = 0;
+                allHouseholds.forEach(hh => {
+                    // Filter: Only show if NOT in paidIds
+                    if (!paidIds.has(hh.id)) {
+                        const option = document.createElement('option');
+                        option.value = hh.id;
+                        option.textContent = hh.name;
+                        select.appendChild(option);
+                        count++;
+                    }
+                });
+
+                if (count === 0 && allHouseholds.length > 0) {
+                    const option = document.createElement('option');
+                    option.value = "";
+                    option.textContent = "All records complete for this period.";
+                    option.disabled = true;
+                    select.appendChild(option);
+                }
+            }
+
+            // Initial Load Wrapper
+            async function initHouseholdLogic() {
+                await fetchAllHouseholds();
+                const monthSelect = document.getElementById('month-select');
+                // Trigger update based on initial default month
+                if (monthSelect.value) {
+                    await updateHouseholdDropdown(monthSelect.value);
+                }
+            }
+
+
+            // ==========================================
+            // Administrative Household Provisioning Logic
+            // ==========================================
+            const newHouseholdInput = document.getElementById('new-household-name');
+            const addHouseholdBtn = document.getElementById('btn-add-household');
+
+            // Delete System Elements
+            const btnOpenDeleteModal = document.getElementById('btn-open-delete-modal');
+            const deleteModal = document.getElementById('delete-household-modal');
+            const closeDeleteModalBtn = document.getElementById('close-delete-modal');
+            const closeModalFooterBtn = document.getElementById('btn-close-modal-footer');
+            const householdListContainer = document.getElementById('household-list-container');
+
+            // Toggle Modal
+            function toggleDeleteModal(show) {
+                if (show) {
+                    deleteModal.classList.remove('hidden');
+                    renderHouseholdList();
+                } else {
+                    deleteModal.classList.add('hidden');
+                }
+            }
+
+            if (btnOpenDeleteModal) btnOpenDeleteModal.addEventListener('click', () => toggleDeleteModal(true));
+            if (closeDeleteModalBtn) closeDeleteModalBtn.addEventListener('click', () => toggleDeleteModal(false));
+            if (closeModalFooterBtn) closeModalFooterBtn.addEventListener('click', () => toggleDeleteModal(false));
+            // Close on outside click
+            if (deleteModal) {
+                deleteModal.addEventListener('click', (e) => {
+                    if (e.target === deleteModal) toggleDeleteModal(false);
+                });
+            }
+
+            // Render List Logic
+            async function renderHouseholdList() {
+                householdListContainer.innerHTML = '<div class="flex justify-center py-4"><svg class="animate-spin h-6 w-6 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg></div>';
+
+                // Refresh list to be sure
+                await fetchAllHouseholds();
+
+                householdListContainer.innerHTML = '';
+
+                if (allHouseholds.length === 0) {
+                    householdListContainer.innerHTML = '<p class="text-center text-gray-500">No households found.</p>';
+                    return;
+                }
+
+                const ul = document.createElement('ul');
+                ul.className = "divide-y divide-gray-100";
+
+                allHouseholds.forEach(hh => {
+                    const li = document.createElement('li');
+                    li.className = "flex justify-between items-center py-3 group";
+                    li.innerHTML = `
+                        <span class="text-gray-700 font-medium">${hh.name}</span>
+                        <button class="delete-hh-btn text-red-500 hover:text-red-700 opacity-60 group-hover:opacity-100 transition-opacity p-2 rounded hover:bg-red-50" data-id="${hh.id}" data-name="${hh.name}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </button>
+                    `;
+                    ul.appendChild(li);
+                });
+
+                householdListContainer.appendChild(ul);
+
+                // Attach listeners
+                const deleteButtons = householdListContainer.querySelectorAll('.delete-hh-btn');
+                deleteButtons.forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const id = btn.getAttribute('data-id');
+                        const name = btn.getAttribute('data-name');
+
+                        // Confirmation Dialogue
+                        if (confirm(`Are you really going to delete "${name}"? This action cannot be undone.`)) {
+                            try {
+                                await deleteDoc(doc(db, "household names", id));
+                                // Re-render
+                                btn.closest('li').remove();
+                                // Update Main State in background
+                                await fetchAllHouseholds();
+                                // Update main dropdown
+                                const currentMonth = document.getElementById('month-select').value;
+                                if (currentMonth) updateHouseholdDropdown(currentMonth);
+                            } catch (err) {
+                                console.error("Error deleting household:", err);
+                                alert("Failed to delete: " + err.message);
+                            }
+                        }
+                    });
+                });
+            }
+
+
+            if (addHouseholdBtn) {
+                addHouseholdBtn.addEventListener('click', async () => {
+                    const name = newHouseholdInput.value.trim();
+                    if (!name) {
+                        alert("Please enter a household name.");
+                        return;
+                    }
+
+                    // Disable button
+                    const originalContent = addHouseholdBtn.innerHTML;
+                    addHouseholdBtn.disabled = true;
+                    addHouseholdBtn.innerHTML = "Adding...";
+
+                    try {
+                        const exists = allHouseholds.some(h => h.name.toLowerCase() === name.toLowerCase());
+                        if (exists) {
+                            alert("This household already exists in the database.");
+                            addHouseholdBtn.disabled = false;
+                            addHouseholdBtn.innerHTML = originalContent;
+                            return;
+                        }
+
+                        // Add to Firestore
+                        const docRef = await addDoc(collection(db, "household names"), {
+                            Name: name,
+                            createdAt: serverTimestamp()
+                        });
+
+                        alert("New household added successfully!");
+                        newHouseholdInput.value = ""; // Clear input
+
+                        // Refresh Lists
+                        await fetchAllHouseholds();
+
+                        // Refresh Dropdown for current selection
+                        const currentMonth = document.getElementById('month-select').value;
+                        if (currentMonth) {
+                            await updateHouseholdDropdown(currentMonth);
+                        }
+
+                    } catch (error) {
+                        console.error("Error adding household:", error);
+                        alert("Failed to add household: " + error.message);
+                    } finally {
+                        addHouseholdBtn.disabled = false;
+                        addHouseholdBtn.innerHTML = originalContent;
+                    }
+                });
+            }
+
+
+            // ==========================================
+            // Firebase CRUD for "entries" Collection
+            // ==========================================
+
+            // --- Helper: Get Normalized Month Year ---
+            function getMonthYear(data) {
+                if (!data.month) return null;
+                if (data.month.includes(' ')) return data.month; // Already "Month Year"
+
+                // Legacy Data Support
+                let year = null;
+                if (data.paymentDate) {
+                    year = new Date(data.paymentDate).getFullYear();
+                } else if (data.timestamp && data.timestamp.toDate) {
+                    year = data.timestamp.toDate().getFullYear();
+                }
+                if (!year) year = 2025; // Fallback
+                return `${data.month} ${year}`;
+            }
+
+            let editingId = null;
+            let currentFilter = 'all';
+            const submitBtn = document.getElementById('btn-submit-salary');
+            const testDataList = document.getElementById('test-data-list');
+            const noDataMsg = document.getElementById('no-data-msg');
+            const testDataSection = document.getElementById('test-data-section');
+            const historyFilter = document.getElementById('history-filter');
+
+            // --- 0. Populate History Filter & Load Initial Data ---
+            async function loadHistoryFilter() {
+                try {
+                    const previousMonthString = getPreviousMonthString();
+
+                    // 2. Fetch all entries to find unique months
+                    const q = query(entriesCollection, orderBy('timestamp', 'desc'), limit(500));
+                    const snapshot = await getDocs(q);
+
+                    const uniqueMonths = new Set();
+                    uniqueMonths.add(previousMonthString); // Ensure prev month is present
+                    // Also add current month just in case
+                    uniqueMonths.add(getMonthStringFromDate(new Date()));
+
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        const normalizedMonth = getMonthYear(data);
+                        if (normalizedMonth) {
+                            uniqueMonths.add(normalizedMonth);
+                        }
+                    });
+
+                    // 3. Convert to array and Sort (Newest first)
+                    const sortedMonths = Array.from(uniqueMonths).sort((a, b) => {
+                        const dateA = new Date(a + " 1");
+                        const dateB = new Date(b + " 1");
+                        return dateB - dateA;
+                    });
+
+                    // 4. Populate Dropdown
+                    historyFilter.innerHTML = '';
+
+                    sortedMonths.forEach(month => {
+                        const opt = document.createElement('option');
+                        opt.value = month;
+                        opt.textContent = month;
+                        historyFilter.appendChild(opt);
+                    });
+
+                    // 5. Set Default to Previous Month
+                    historyFilter.value = previousMonthString;
+                    currentFilter = previousMonthString;
+
+                    return currentFilter; // Return for chaining
+
+                } catch (e) {
+                    console.error("Error loading filter:", e);
+                    return null;
+                }
+            }
+
+            // --- 1. Real-time Listener (READ) with Filter ---
+            let unsubscribe = null;
+
+            function loadEntries(filterMonth) {
+                if (unsubscribe) {
+                    unsubscribe();
+                }
+
+                if (!filterMonth) return; // Guard clause
+
+                // Query ALL recent records (client-side filtering)
+                let q = query(entriesCollection, orderBy('timestamp', 'desc'), limit(500));
+
+                unsubscribe = onSnapshot(q, (snapshot) => {
+                    testDataList.innerHTML = '';
+
+                    // Client-side filtering
+                    const filteredDocs = [];
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        const itemMonth = getMonthYear(data);
+                        if (itemMonth === filterMonth) {
+                            filteredDocs.push({
+                                id: doc.id,
+                                data: data,
+                                itemMonth: itemMonth
+                            });
+                        }
+                    });
+
+                    if (filteredDocs.length === 0) {
+                        testDataSection.classList.remove('hidden');
+                        noDataMsg.classList.remove('hidden');
+                        noDataMsg.textContent = `No entries found for ${filterMonth}.`;
+                    } else {
+                        testDataSection.classList.remove('hidden');
+                        noDataMsg.classList.add('hidden');
+
+                        filteredDocs.forEach(item => {
+                            const data = item.data;
+                            const id = item.id;
+
+                            const row = document.createElement('tr');
+                            row.className = 'hover:bg-gray-50 transition-colors';
+                            row.innerHTML = `
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${data.paymentDate || '-'}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <div class="font-medium">${data.householdName || 'Unknown'}</div>
+                                    <div class="text-xs text-gray-500">${item.itemMonth || ''}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <div class="font-medium">₹${data.salaryAmount || 0}</div>
+                                    ${data.extraAmount > 0 ? `<div class="text-xs text-green-600">+ ₹${data.extraAmount} (Extra)</div>` : ''}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <button class="text-indigo-600 hover:text-indigo-900 mr-3 btn-edit" data-offset="${id}">Edit</button>
+                                    <button class="text-red-600 hover:text-red-900 btn-delete" data-offset="${id}">Delete</button>
+                                </td>
+                            `;
+
+                            row.querySelector('.btn-edit').addEventListener('click', () => editEntry(id, data));
+                            row.querySelector('.btn-delete').addEventListener('click', () => deleteEntry(id));
+
+                            testDataList.appendChild(row);
+                        });
+                    }
+                }, (error) => {
+                    console.error("Error listening to entries:", error);
+                });
+            }
+
+            // Initial Load
+            loadHistoryFilter().then((initialMonth) => {
+                if (initialMonth) loadEntries(initialMonth);
+            });
+
+            // Filter Change Event
+            historyFilter.addEventListener('change', (e) => {
+                currentFilter = e.target.value;
+                loadEntries(currentFilter);
+            });
+
+            // --- 2. Submit Logic (CREATE / UPDATE) ---
+            if (submitBtn) {
+                submitBtn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+
+                    // Gather Data
+                    const month = document.getElementById('month-select').value;
+                    const householdSelect = document.getElementById('household-select');
+                    const householdId = householdSelect.value;
+                    const householdName = householdSelect.options[householdSelect.selectedIndex]?.text;
+                    const salaryAmount = document.getElementById('salary-amount').value;
+                    const extraAmount = document.getElementById('extra-amount').value;
+                    const varianceReason = document.getElementById('variance-reason').value;
+                    const otherReason = document.getElementById('other-reason').value;
+                    const paymentMode = document.getElementById('payment-mode').value;
+                    const paymentDate = document.getElementById('payment-date').value;
+                    const riceCheck = document.getElementById('rice-check').checked;
+                    const gasCheck = document.getElementById('gas-check').checked;
+                    const gasAmount = document.getElementById('gas-amount').value;
+
+                    // Validation
+                    if (!salaryAmount && !extraAmount) {
+                        alert("Please enter at least a Salary Amount or Extra Amount.");
+                        return;
+                    }
+                    if (!householdId) {
+                        alert("Please select a Household.");
+                        return;
+                    }
+
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Processing...`;
+
+                    try {
+                        // --- Strict Backend Validation for Duplicate ---
+                        // Only check on CREATE (when editingId is null)
+                        if (!editingId) {
+                            const q = query(entriesCollection,
+                                where("month", "==", month),
+                                where("householdId", "==", householdId)
+                            );
+                            const duplicateSnapshot = await getDocs(q);
+                            if (!duplicateSnapshot.empty) {
+                                throw new Error(`Duplicate Entry! ${householdName} has already paid for ${month}.`);
+                            }
+                        }
+
+                        const entryData = {
+                            month,
+                            householdId,
+                            householdName,
+                            salaryAmount,
+                            extraAmount,
+                            varianceReason: varianceReason === 'other' ? otherReason : varianceReason,
+                            paymentMode,
+                            paymentDate,
+                            supplies: {
+                                rice: riceCheck,
+                                gas: gasCheck,
+                                gasAmount: gasCheck ? (gasAmount || 0) : 0
+                            },
+                            timestamp: serverTimestamp()
+                        };
+
+                        if (editingId) {
+                            // UPDATE
+                            await updateDoc(doc(db, "Salary Data", editingId), entryData);
+                            alert("Entry updated successfully!");
+                        } else {
+                            // CREATE
+                            await addDoc(entriesCollection, entryData);
+                            alert("Entry submitted successfully!");
+                        }
+
+                        resetForm();
+                        // Refresh filter list in case a new month was introduced
+                        loadHistoryFilter();
+                        // Update household dropdown to remove the just-submitted household
+                        await updateHouseholdDropdown(month);
+
+                    } catch (error) {
+                        console.error("Error saving entry:", error);
+                        alert("" + error.message);
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = `
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span>${editingId ? 'Update Salary' : 'Submit Salary'}</span>
+                        `;
+                    }
+                });
+            }
+
+            // --- 3. Edit Logic ---
+            function editEntry(id, data) {
+                editingId = id;
+
+                // Populate Fields
+                document.getElementById('month-select').value = data.month;
+
+                const monthSelect = document.getElementById('month-select');
+                const hhSelect = document.getElementById('household-select');
+
+                // Helper to restore
+                const restoreAndSelect = async () => {
+                    let exists = false;
+                    for (let i = 0; i < hhSelect.options.length; i++) {
+                        if (hhSelect.options[i].value === data.householdId) {
+                            exists = true;
+                            break;
+                        }
+                    }
+
+                    if (!exists) {
+                        const option = document.createElement('option');
+                        option.value = data.householdId;
+                        option.textContent = data.householdName; // Use stored name
+                        hhSelect.appendChild(option);
+                    }
+
+                    hhSelect.value = data.householdId;
+                };
+
+                document.getElementById('salary-amount').value = data.salaryAmount || '';
+                document.getElementById('extra-amount').value = data.extraAmount || '';
+
+                // Trigger input events to handle variance logic
+                document.getElementById('salary-amount').dispatchEvent(new Event('input'));
+                document.getElementById('extra-amount').dispatchEvent(new Event('input'));
+
+                setTimeout(() => {
+                    if (data.varianceReason) {
+                        const select = document.getElementById('variance-reason');
+                        const options = Array.from(select.options).map(o => o.value);
+
+                        if (options.includes(data.varianceReason)) {
+                            select.value = data.varianceReason;
+                        } else {
+                            select.value = 'other';
+                            select.dispatchEvent(new Event('change'));
+                            document.getElementById('other-reason').value = data.varianceReason;
+                        }
+                    }
+                }, 100);
+
+                document.getElementById('payment-mode').value = data.paymentMode || 'Select Mode';
+                document.getElementById('payment-date').value = data.paymentDate || '';
+
+                if (data.supplies) {
+                    document.getElementById('rice-check').checked = data.supplies.rice || false;
+                    document.getElementById('gas-check').checked = data.supplies.gas || false;
+
+                    if (data.supplies.gas) {
+                        const gasContainer = document.getElementById('gas-amount-container');
+                        const gasInput = document.getElementById('gas-amount');
+                        if (gasContainer) gasContainer.classList.remove('hidden');
+                        if (gasInput) gasInput.value = data.supplies.gasAmount || '';
+                    }
+                }
+
+                // Update Button
+                submitBtn.innerHTML = `
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    <span>Update Salary</span>
+                `;
+
+                restoreAndSelect();
+                document.getElementById('imam-salary-view').scrollIntoView({ behavior: 'smooth' });
+            }
+
+            // --- 4. Delete Logic ---
+            async function deleteEntry(id) {
+                if (confirm("Are you certain you wish to permanently remove this entry? This action is irreversible.")) {
+                    try {
+                        await deleteDoc(doc(db, "Salary Data", id));
+                        const month = document.getElementById('month-select').value;
+                        if (month) {
+                            updateHouseholdDropdown(month);
+                            if (currentFilter === month) loadEntries(month);
+                        }
+                        alert("Entry deleted successfully.");
+                    } catch (error) {
+                        console.error("Error deleting document: ", error);
+                        alert("Error deleting entry: " + error.message);
+                    }
+                }
+            }
+
+            // --- 5. Reset Logic ---
+            function resetForm() {
+                editingId = null;
+                document.getElementById('salary-amount').value = '';
+                document.getElementById('extra-amount').value = '';
+                document.getElementById('other-reason').value = '';
+                document.getElementById('payment-date').value = '';
+                document.getElementById('household-select').value = ""; // Reset household
+                document.getElementById('payment-mode').selectedIndex = 0;
+                document.getElementById('variance-reason').selectedIndex = 0;
+                document.getElementById('rice-check').checked = false;
+                document.getElementById('gas-check').checked = false;
+                document.getElementById('gas-amount-container').classList.add('hidden');
+                document.getElementById('gas-amount').value = '';
+
+                // Reset Button
+                submitBtn.innerHTML = `
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span>Submit Salary</span>
+                `;
+
+                document.getElementById('salary-amount').dispatchEvent(new Event('input'));
+                const month = document.getElementById('month-select').value;
+                if (month) updateHouseholdDropdown(month);
+            }
+
+            // Populate Month Select
+            function populateMonthSelect() {
+                const select = document.getElementById('month-select');
+                const months = [
+                    "January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"
+                ];
+
+                const now = new Date();
+                const currentYear = now.getFullYear();
+                const prevYear = currentYear - 1;
+                const years = [prevYear, currentYear];
+
+                select.innerHTML = '';
+
+                years.forEach(year => {
+                    months.forEach(month => {
+                        const value = `${month} ${year}`;
+                        const option = document.createElement('option');
+                        option.value = value;
+                        option.textContent = value;
+                        select.appendChild(option);
+                    });
+                });
+
+                // Set default to Previous Month
+                const prevMonthDate = new Date();
+                prevMonthDate.setMonth(prevMonthDate.getMonth() - 1);
+                const defaultVal = `${months[prevMonthDate.getMonth()]} ${prevMonthDate.getFullYear()}`;
+                select.value = defaultVal;
+
+                // Add listener
+                select.addEventListener('change', (e) => {
+                    updateHouseholdDropdown(e.target.value);
+                });
+            }
+
+            populateMonthSelect();
+
+            // Initialize Households logic (replaces simple loadHouseholdNames)
+            initHouseholdLogic();
+
+
+            // ==========================================
+            // Prayer Timings Logic
+            // ==========================================
+            const prayerTimingCollection = collection(db, "Prayer Timings");
+            const dailyTimingsDocId = "daily";
+
+            // 1. Fetch Timings
+            async function loadPrayerTimings() {
+                try {
+                    const docRef = doc(db, "Prayer Timings", dailyTimingsDocId);
+                    const docSnap = await getDoc(docRef);
+
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        if (data.fajr) document.getElementById('fajr-time').value = data.fajr;
+                        if (data.dhuhr) document.getElementById('dhuhr-time').value = data.dhuhr;
+                        if (data.asr) document.getElementById('asr-time').value = data.asr;
+                        if (data.maghrib) document.getElementById('maghrib-time').value = data.maghrib;
+                        if (data.isha) document.getElementById('isha-time').value = data.isha;
+                    }
+                } catch (error) {
+                    console.error("Error loading prayer timings:", error);
+                }
+            }
+
+            loadPrayerTimings();
+
+            // 2. Save Timings
+            const prayerForm = document.getElementById('prayer-timing-form');
+            if (prayerForm) {
+                prayerForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    const btn = prayerForm.querySelector('button[type="submit"]');
+                    const originalBtnContent = btn.innerHTML;
+                    btn.disabled = true;
+                    btn.innerHTML = 'Saving...';
+
+                    const timings = {
+                        fajr: document.getElementById('fajr-time').value,
+                        dhuhr: document.getElementById('dhuhr-time').value,
+                        asr: document.getElementById('asr-time').value,
+                        maghrib: document.getElementById('maghrib-time').value,
+                        isha: document.getElementById('isha-time').value,
+                        updatedAt: serverTimestamp()
+                    };
+
+                    try {
+                        await setDoc(doc(db, "Prayer Timings", dailyTimingsDocId), timings, { merge: true });
+                        alert("Timings updated successfully!");
+                    } catch (error) {
+                        console.error("Error saving timings:", error);
+                        alert("Error saving timings: " + error.message);
+                    } finally {
+                        btn.disabled = false;
+                        btn.innerHTML = originalBtnContent;
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>
